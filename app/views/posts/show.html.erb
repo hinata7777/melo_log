@@ -1,0 +1,17 @@
+<div class="min-h-screen bg-gray-900 text-white p-6 flex flex-col items-center">
+  <div class="bg-gray-800 rounded-lg p-6 shadow-md w-full max-w-md text-center">
+    <p class="text-green-400 font-bold mb-2">投稿が完了しました！</p>
+
+    <img src="<%= @post.song.album_art_url %>" class="w-32 h-32 mx-auto rounded mb-4">
+    <h2 class="text-2xl font-bold mb-1"><%= @post.song.title %></h2>
+    <p class="text-gray-400 mb-6">by <%= @post.song.artist %></p>
+
+    <p class="bg-gray-700 rounded p-4 text-left mb-6"><%= @post.memory_text %></p>
+
+    <a href="https://twitter.com/intent/tweet?text=<%= ERB::Util.url_encode(@post.memory_text) %>&url=<%= ERB::Util.url_encode(@post.song.spotify_url) %>"
+       target="_blank"
+       class="bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-3 rounded-lg shadow-lg">
+      Xでシェアする
+    </a>
+  </div>
+</div>

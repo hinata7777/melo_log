@@ -1,0 +1,42 @@
+<div class="bg-gray-900 text-white flex items-center justify-center p-6">
+  <div class="bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-lg text-center">
+    <h1 class="text-2xl font-bold mb-6">曲と思い出を投稿する</h1>
+
+    <!-- 検索フォーム -->
+    <%= form_with url: search_songs_path, method: :get, data: { turbo_frame: "search_results" }, class: "mb-6" do |f| %>
+      <div class="flex justify-center mb-3">
+        <%= f.text_field :q, placeholder: "曲名やアーティスト名",
+                         class: "p-2 rounded w-64 bg-gray-900 border border-white text-white placeholder-gray-400 mr-2" %>
+        <%= f.submit "検索", class: "bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded" %>
+      </div>
+    <% end %>
+
+    <!-- Turbo Frame: 検索結果表示 -->
+    <%= turbo_frame_tag "search_results" do %>
+      <!-- 検索前は空 -->
+    <% end %>
+
+    <!-- 選択した曲プレビュー -->
+    <div id="selected-song" class="mt-6 hidden bg-gray-700 rounded-lg p-4 shadow-md flex items-center">
+      <img id="preview-art" class="w-16 h-16 rounded mr-4">
+      <div class="text-left">
+        <p id="preview-title" class="font-bold text-white"></p>
+        <p id="preview-artist" class="text-gray-300 text-sm"></p>
+      </div>
+    </div>
+
+    <!-- 投稿フォーム -->
+    <%= form_with model: @post, url: posts_path, class: "mt-6" do |f| %>
+      <!-- 曲情報をhiddenで送信 -->
+      <%= hidden_field_tag :spotify_id %>
+      <%= hidden_field_tag :title %>
+      <%= hidden_field_tag :artist %>
+      <%= hidden_field_tag :album_art_url %>
+      <%= hidden_field_tag :spotify_url %>
+
+      <%= f.text_area :memory_text, placeholder: "この曲の思い出を書こう",
+                       class: "w-full p-3 rounded bg-gray-900 border border-white text-white placeholder-gray-400 mb-4" %>
+      <%= f.submit "投稿する", class: "bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-md" %>
+    <% end %>
+  </div>
+</div>
