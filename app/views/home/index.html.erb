@@ -1,17 +1,21 @@
-<div class="text-center mt-20">
-  <!-- サービス名 -->
-  <h1 class="text-5xl font-extrabold text-white">MeloLog</h1>
+<div class="relative flex items-center justify-center text-center ">
+  <!-- 背景画像 -->
+  <div class="absolute inset-0 bg-cover bg-center opacity-30 z-0"
+      style="background-image: url('<%= asset_path("album_bg.jpg") %>');">
+  </div>
 
-  <!-- サービス説明 -->
-  <p class="mt-4 text-lg text-gray-400">
-    あなたの音楽の思い出をシェアしよう。
-  </p>
-
-  <!-- 投稿作成ボタン -->
-  <div class="mt-8">
-    <%= link_to "投稿を作成する", "#",
-      class: "px-6 py-3 rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 
-              hover:from-blue-600 hover:to-purple-600 text-white font-semibold 
-              shadow-md hover:shadow-lg transition duration-300" %>
+  <!-- コンテンツ -->
+  <div class="relative z-20 px-6 py-20">
+    <h1 class="text-5xl font-extrabold text-white mt-10">MeloLog</h1>
+    <p class="mt-10 text-lg text-gray-300">
+      あなたの音楽の思い出をシェアしよう。<br>
+      好きな曲と、その瞬間の気持ちを残せる場所。
+    </p>
+    <div class="mt-40">
+      <%= link_to "投稿を作成する", "#",
+        class: "px-6 py-3 rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 
+                hover:from-blue-600 hover:to-purple-600 text-white font-semibold 
+                shadow-md hover:shadow-lg transition duration-300" %>
+    </div>
   </div>
 </div>

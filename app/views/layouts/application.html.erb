@@ -18,13 +18,14 @@
   </head>
 
   <body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col">
-    <%= render 'shared/header' %>
+    <div class="relative z-50">
+      <%= render 'shared/header' %>
+    </div>
 
-    <!-- メインコンテンツが余白を埋める -->
-    <main class="flex-grow">
+    <main class="flex-grow relative">
       <%= yield %>
     </main>
-
+    
     <%= render 'shared/footer' %>
   </body>
 </html>
