@@ -28,11 +28,11 @@
     <!-- 投稿フォーム -->
     <%= form_with model: @post, url: posts_path, class: "mt-6" do |f| %>
       <!-- 曲情報をhiddenで送信 -->
-      <%= hidden_field_tag :spotify_id %>
-      <%= hidden_field_tag :title %>
-      <%= hidden_field_tag :artist %>
-      <%= hidden_field_tag :album_art_url %>
-      <%= hidden_field_tag :spotify_url %>
+      <%= hidden_field_tag :spotify_id, nil, data: { turbo_permanent: true } %>
+      <%= hidden_field_tag :title, nil, data: { turbo_permanent: true } %>
+      <%= hidden_field_tag :artist, nil, data: { turbo_permanent: true } %>
+      <%= hidden_field_tag :album_art_url, nil, data: { turbo_permanent: true } %>
+      <%= hidden_field_tag :spotify_url, nil, data: { turbo_permanent: true } %>
 
       <%= f.text_area :memory_text, placeholder: "この曲の思い出を書こう",
                        class: "w-full p-3 rounded bg-gray-900 border border-white text-white placeholder-gray-400 mb-4" %>

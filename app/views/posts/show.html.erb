@@ -1,16 +1,27 @@
-<div class="min-h-screen bg-gray-900 text-white p-6 flex flex-col items-center">
-  <div class="bg-gray-800 rounded-lg p-6 shadow-md w-full max-w-md text-center">
-    <p class="text-green-400 font-bold mb-2">投稿が完了しました！</p>
+<div class="min-h-screen bg-gray-900 text-white flex items-center justify-center p-6">
+  <div class="bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-lg text-center">
 
-    <img src="<%= @post.song.album_art_url %>" class="w-32 h-32 mx-auto rounded mb-4">
-    <h2 class="text-2xl font-bold mb-1"><%= @post.song.title %></h2>
-    <p class="text-gray-400 mb-6">by <%= @post.song.artist %></p>
+    <!-- 曲情報 -->
+    <img src="<%= @post.song.album_art_url %>" class="mx-auto w-32 h-32 rounded mb-4">
+    <h1 class="text-2xl font-bold"><%= @post.song.title %></h1>
+    <p class="text-gray-400 mb-6"><%= @post.song.artist %></p>
 
-    <p class="bg-gray-700 rounded p-4 text-left mb-6"><%= @post.memory_text %></p>
+    <!-- 思い出テキスト -->
+    <p class="bg-gray-700 p-4 rounded"><%= @post.memory_text %></p>
 
-    <a href="https://twitter.com/intent/tweet?text=<%= ERB::Util.url_encode(@post.memory_text) %>&url=<%= ERB::Util.url_encode(@post.song.spotify_url) %>"
-       target="_blank"
-       class="bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-3 rounded-lg shadow-lg">
+    <!-- Spotifyリンク -->
+    <a href="<%= @post.song.spotify_url %>" target="_blank"
+       class="block mt-4 text-green-400 hover:text-green-300">
+      Spotifyで聴く
+    </a>
+
+    <!-- Xシェアリンク -->
+    <% share_text = "#{@post.song.title} - #{@post.song.artist}\n#{@post.memory_text}\n#{@post.song.spotify_url}" %>
+
+    <a href="https://twitter.com/intent/tweet?text=<%= CGI.escape(share_text) %>"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="mt-6 inline-block bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md">
       Xでシェアする
     </a>
   </div>

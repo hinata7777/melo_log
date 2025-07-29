@@ -22,6 +22,18 @@
       <%= render 'shared/header' %>
     </div>
 
+    <% if notice %>
+      <div class="bg-green-500 text-white text-center py-2">
+        <%= notice %>
+      </div>
+    <% end %>
+
+    <% if alert %>
+      <div class="bg-red-500 text-white text-center py-2">
+        <%= alert %>
+      </div>
+    <% end %>
+
     <main class="flex-grow relative">
       <%= yield %>
     </main>
