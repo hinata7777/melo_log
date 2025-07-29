@@ -2,13 +2,23 @@
   <div class="mt-4 space-y-3">
     <% songs.each do |song| %>
       <div class="bg-gray-800 rounded-lg p-4 flex items-center shadow-md">
+        <!-- ジャケット画像 -->
         <img src="<%= song.album_art_url %>" class="w-16 h-16 rounded mr-4">
-        <div>
-          <p class="font-bold"><%= song.title %></p>
+
+        <!-- 曲情報 -->
+        <div class="flex-1 text-left">
+          <p class="font-bold text-white text-base"><%= song.title %></p>
           <p class="text-gray-400 text-sm"><%= song.artist %></p>
         </div>
+
+        <!-- 選択ボタン -->
         <button type="button"
-                class="ml-auto bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">
+                class="ml-auto bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded select-song"
+                data-spotify-id="<%= song.spotify_id %>"
+                data-title="<%= song.title %>"
+                data-artist="<%= song.artist %>"
+                data-album-art-url="<%= song.album_art_url %>"
+                data-spotify-url="<%= song.spotify_url %>">
           選択
         </button>
       </div>
