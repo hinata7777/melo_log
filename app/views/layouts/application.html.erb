@@ -15,6 +15,14 @@
     <link rel="apple-touch-icon" href="/icon.png">
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+
+    <% if @post&.persisted? && @post.song %>
+      <meta property="og:title" content="MeloLogを投稿したよ！ #MeloLog <%= @post.song.title %> - <%= @post.song.artist %>">
+      <meta property="og:description" content="<%= @post.memory_text.to_s.truncate(80) %>">
+      <meta property="og:image" content="<%= @post.song.album_art_url %>">
+      <meta property="og:url" content="<%= post_url(@post) %>">
+      <meta property="og:type" content="article">
+    <% end %>
   </head>
 
   <body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col">

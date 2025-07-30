@@ -16,13 +16,13 @@
     </a>
 
     <!-- Xシェアリンク -->
-    <% share_text = "#{@post.song.title} - #{@post.song.artist}\n#{@post.memory_text}\n#{@post.song.spotify_url}" %>
+    <% share_text = "MeloLogを投稿したよ！ #MeloLog\n#{@post.song.title} - #{@post.song.artist}" %>
 
-    <a href="https://twitter.com/intent/tweet?text=<%= CGI.escape(share_text) %>"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="mt-6 inline-block bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md">
-      Xでシェアする
+    <a href="https://twitter.com/intent/tweet?text=<%= CGI.escape(share_text) %>%0A&url=<%= post_url(@post) %>"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="mt-6 inline-flex items-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md">
+      <%= image_tag("x-logo.png", alt: "Xロゴ", size: "20x20") %>&ensp;でシェアする
     </a>
   </div>
 </div>
