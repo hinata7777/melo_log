@@ -2,6 +2,18 @@
   <div class="bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-lg text-center">
     <h1 class="text-2xl font-bold mb-6">曲と思い出を投稿する</h1>
 
+    <!-- エラー文 -->
+    <% if @post.errors.any? %>
+      <div class="mb-4 bg-red-500 text-white p-2 rounded">
+        <p><%= pluralize(@post.errors.count, "error") %> prohibited this post from being saved:</p>
+        <ul>
+          <% @post.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
     <!-- 検索フォーム -->
     <%= form_with url: search_songs_path, method: :get, data: { turbo_frame: "search_results" }, class: "mb-6" do |f| %>
       <div class="flex justify-center mb-3">
