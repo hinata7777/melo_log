@@ -2,7 +2,7 @@ class PostsController < ApplicationController
   def new
     @post = Post.new
   end
-
+  
   def create
     # 1. 送られてきた曲情報を取得
     spotify_id = params[:spotify_id]
