@@ -11,7 +11,7 @@
 
     <!-- Spotifyリンク -->
     <a href="<%= @post.song.spotify_url %>" target="_blank"
-       class="block mt-4 text-green-400 hover:text-green-300">
+       class="block mt-6 text-green-400 hover:text-green-300">
       Spotifyで聴く
     </a>
 
@@ -24,5 +24,19 @@
       class="mt-6 inline-flex items-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md">
       <%= image_tag("x-logo.png", alt: "Xロゴ", size: "20x20") %>&ensp;でシェアする
     </a>
+
+    <!-- 再投稿リンク -->
+    <div class="mt-6">
+      <%= link_to "もう一度投稿する", new_post_path, class: "text-gray-400 hover:underline text-sm" %>
+    </div>
+
+    <!-- 追加部分：登録誘導 -->
+    <div class="mt-10 border-t border-gray-700 pt-6">
+      <p class="text-gray-300 mb-3 text-sm">
+        ユーザー登録すると、投稿をマイページで管理できるよ！
+      </p>
+      <%= link_to "アカウントを作成する", "#",
+        class: "bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow-md inline-block mb-4" %>
+    </div>
   </div>
 </div>
