@@ -26,7 +26,7 @@ class PostsController < ApplicationController
       song_id: song.id,
       memory_text: params[:post][:memory_text]
     )
-    @post.user = current_user if user_signed_in?
+    @post.user = current_user if logged_in?
 
     if @post.save
       redirect_to @post, notice: "投稿が完了しました！"

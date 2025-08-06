@@ -1,42 +1,60 @@
-<div class="container">
-  <div class="row">
-    <div class="col-md-8 mx-auto">
-      <h1 class="text-center mb-4">🎵 ユーザー登録</h1>
-      
-      <%= form_with model: @user, local: true do |f| %>
-        <% if @user.errors.any? %>
-          <div class="alert alert-danger">
-            <ul class="mb-0">
-              <% @user.errors.full_messages.each do |message| %>
-                <li><%= message %></li>
-              <% end %>
-            </ul>
-          </div>
-        <% end %>
+<div class="min-h-[calc(100vh-120px)] flex items-center justify-center">
+  <div class="bg-gray-800 rounded-2xl shadow-lg p-8 w-full max-w-md mx-auto text-white">
+    <!-- タイトル -->
+    <h1 class="text-3xl font-extrabold text-center mb-6">🎵 ユーザー登録</h1>
 
-        <div class="mb-3">
-          <%= f.label :email, 'メールアドレス', class: "form-label" %>
-          <%= f.email_field :email, class: "form-control" %>
-        </div>
-        
-        <div class="mb-3">
-          <%= f.label :password, 'パスワード', class: "form-label" %>
-          <%= f.password_field :password, class: "form-control" %>
-        </div>
-        
-        <div class="mb-3">
-          <%= f.label :password_confirmation, 'パスワード確認', class: "form-label" %>
-          <%= f.password_field :password_confirmation, class: "form-control" %>
-        </div>
-        
-        <div class="d-grid">
-          <%= f.submit "登録", class: "btn btn-primary" %>
-        </div>
-      <% end %>
-      
-      <div class='text-center mt-3'>
-        <%= link_to 'ログインはこちら', login_path %>
+    <!-- エラーメッセージ -->
+    <% if @user.errors.any? %>
+      <div class="bg-red-500 text-white p-3 rounded mb-4 text-sm">
+        <ul class="mb-0 list-disc list-inside">
+          <% @user.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
       </div>
+    <% end %>
+
+    <!-- フォーム -->
+    <%= form_with model: @user, local: true, html: { class: "space-y-5" } do |f| %>
+      <!-- ニックネーム -->
+      <div>
+        <%= f.label :nickname, 'ニックネーム', class: "block mb-1 text-sm" %>
+        <%= f.text_field :nickname,
+              class: "w-full p-3 rounded bg-gray-900 border border-gray-600 placeholder-gray-500 focus:border-green-500 focus:outline-none" %>
+      </div>  
+      
+      <!-- メールアドレス -->
+      <div>
+        <%= f.label :email, 'メールアドレス', class: "block mb-1 text-sm" %>
+        <%= f.email_field :email,
+              class: "w-full p-3 rounded bg-gray-900 border border-gray-600 placeholder-gray-500 focus:border-green-500 focus:outline-none" %>
+      </div>
+
+      <!-- パスワード -->
+      <div>
+        <%= f.label :password, 'パスワード', class: "block mb-1 text-sm" %>
+        <%= f.password_field :password,
+              class: "w-full p-3 rounded bg-gray-900 border border-gray-600 placeholder-gray-500 focus:border-green-500 focus:outline-none" %>
+      </div>
+
+      <!-- パスワード確認 -->
+      <div>
+        <%= f.label :password_confirmation, 'パスワード確認', class: "block mb-1 text-sm" %>
+        <%= f.password_field :password_confirmation,
+              class: "w-full p-3 rounded bg-gray-900 border border-gray-600 placeholder-gray-500 focus:border-green-500 focus:outline-none" %>
+      </div>
+
+      <!-- 登録ボタン -->
+      <div>
+        <%= f.submit "登録",
+              class: "bg-green-500 hover:bg-green-600 text-white font-bold px-4 py-2 rounded-lg w-full transition duration-200" %>
+      </div>
+    <% end %>
+
+    <!-- ログインリンク -->
+    <div class="text-center mt-6">
+      <%= link_to 'ログインはこちら', login_path,
+                  class: "text-sm text-gray-400 hover:text-white transition duration-150" %>
     </div>
   </div>
 </div>

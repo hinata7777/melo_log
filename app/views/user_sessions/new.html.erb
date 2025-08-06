@@ -1,27 +1,40 @@
-<div class="container">
-  <div class="row">
-    <div class="col-md-8 mx-auto">
-      <h1 class="text-center mb-4">🎶 ログイン</h1>
-      
-      <%= form_with url: login_path, local: true do |f| %>
-        <div class="mb-3">
-          <%= f.label :email, 'メールアドレス', class: "form-label" %>
-          <%= f.email_field :email, class: "form-control" %>
-        </div>
-        
-        <div class="mb-3">
-          <%= f.label :password, 'パスワード', class: "form-label" %>
-          <%= f.password_field :password, class: "form-control" %>
-        </div>
-        
-        <div class="d-grid">
-          <%= f.submit "ログイン", class: "btn btn-primary" %>
-        </div>
-      <% end %>
-      
-      <div class='text-center mt-3'>
-        <%= link_to '新規登録はこちら', new_user_path %>
+<div class="min-h-[calc(100vh-120px)] flex items-center justify-center">
+  <div class="bg-gray-800 rounded-2xl shadow-lg p-8 w-full max-w-md mx-auto text-white">
+    <!-- タイトル -->
+    <h1 class="text-3xl font-extrabold text-center mb-6">🎶 ログイン</h1>
+
+    <!-- 補足テキスト -->
+    <p class="text-center text-gray-400 text-sm mb-6">
+      アカウントをお持ちの方はこちらからログインできます
+    </p>
+
+    <!-- フォーム -->
+    <%= form_with url: login_path, local: true, html: { class: "space-y-5" } do |f| %>
+      <!-- メール -->
+      <div>
+        <%= f.label :email, 'メールアドレス', class: "block mb-1 text-sm" %>
+        <%= f.email_field :email,
+              class: "w-full p-3 rounded bg-gray-900 border border-gray-600 placeholder-gray-500 focus:border-green-500 focus:outline-none" %>
       </div>
+
+      <!-- パスワード -->
+      <div>
+        <%= f.label :password, 'パスワード', class: "block mb-1 text-sm" %>
+        <%= f.password_field :password,
+              class: "w-full p-3 rounded bg-gray-900 border border-gray-600 placeholder-gray-500 focus:border-green-500 focus:outline-none" %>
+      </div>
+
+      <!-- ログインボタン -->
+      <div>
+        <%= f.submit "ログイン",
+              class: "bg-green-500 hover:bg-green-600 text-white font-bold px-4 py-2 rounded-lg w-full transition duration-200" %>
+      </div>
+    <% end %>
+
+    <!-- 新規登録リンク -->
+    <div class="text-center mt-6">
+      <%= link_to '新規登録はこちら', new_user_path,
+                  class: "text-sm text-gray-400 hover:text-white transition duration-150" %>
     </div>
   </div>
 </div>
