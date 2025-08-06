@@ -1,4 +1,6 @@
 class PostsController < ApplicationController
+  skip_before_action :require_login, only: %i[new create show]
+
   def new
     @post = Post.new
   end
@@ -19,12 +21,12 @@ class PostsController < ApplicationController
       s.spotify_url = spotify_url
     end
 
-    # 3. Postを作成（ログイン後なら current_user.id に差し替え）
+    # 3. Postを作成（ログイン時のみ current_user をセット）
     @post = Post.new(
-      user_id: 1, # ログイン機能つけたら current_user.id に変更
       song_id: song.id,
       memory_text: params[:post][:memory_text]
     )
+    @post.user = current_user if user_signed_in?
 
     if @post.save
       redirect_to @post, notice: "投稿が完了しました！"

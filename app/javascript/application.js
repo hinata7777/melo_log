@@ -19,11 +19,15 @@ document.addEventListener('click', function (event) {
   document.querySelector('input[name="album_art_url"]').value = albumArtUrl;
   document.querySelector('input[name="spotify_url"]').value = spotifyUrl;
 
+  // 未選択メッセージを非表示にする
+  document.getElementById('no-selection').classList.add('hidden');
+
+  // プレビュー部分を表示に切り替え
+  const preview = document.getElementById('song-preview');
+  preview.classList.remove('hidden');
+
   // プレビュー更新
   document.getElementById('preview-art').src = albumArtUrl;
   document.getElementById('preview-title').textContent = title;
   document.getElementById('preview-artist').textContent = artist;
-
-  // プレビュー表示を表示状態にする
-  document.getElementById('selected-song').classList.remove('hidden');
 });
