@@ -1,0 +1,27 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-8 mx-auto">
+      <h1 class="text-center mb-4">🎶 ログイン</h1>
+      
+      <%= form_with url: login_path, local: true do |f| %>
+        <div class="mb-3">
+          <%= f.label :email, 'メールアドレス', class: "form-label" %>
+          <%= f.email_field :email, class: "form-control" %>
+        </div>
+        
+        <div class="mb-3">
+          <%= f.label :password, 'パスワード', class: "form-label" %>
+          <%= f.password_field :password, class: "form-control" %>
+        </div>
+        
+        <div class="d-grid">
+          <%= f.submit "ログイン", class: "btn btn-primary" %>
+        </div>
+      <% end %>
+      
+      <div class='text-center mt-3'>
+        <%= link_to '新規登録はこちら', new_user_path %>
+      </div>
+    </div>
+  </div>
+</div>
