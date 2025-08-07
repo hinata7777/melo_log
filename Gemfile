@@ -47,7 +47,7 @@ gem 'omniauth-rails_csrf_protection'
 gem 'httparty'
 
 # スタイリ
-gem 'tailwindcss-rails'
+# gem 'tailwindcss-rails'
 
 gem 'dotenv-rails'
 
