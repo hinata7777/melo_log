@@ -9,11 +9,12 @@ class SpotifyService
   # 曲検索
   def self.search(query)
     token = get_token
-    url = URI("#{BASE_URL}/search?q=#{URI.encode_www_form_component(query)}&type=track&limit=5")
+    url = URI("#{BASE_URL}/search?q=#{URI.encode_www_form_component(query)}&type=track&limit=5&market=JP")
 
     response = Net::HTTP.start(url.host, url.port, use_ssl: true) do |http|
       request = Net::HTTP::Get.new(url)
       request['Authorization'] = "Bearer #{token}"
+      request['Accept-Language'] = 'ja-JP,ja;q=0.9'
       http.request(request)
     end
 
