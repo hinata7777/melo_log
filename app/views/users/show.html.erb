@@ -1,0 +1,83 @@
+<div class="min-h-screen bg-gray-900 text-white p-6">
+  <div class="max-w-4xl mx-auto space-y-8">
+
+    <!-- プロフィールヘッダー -->
+    <section class="bg-gray-800 rounded-xl shadow p-6">
+      <div class="flex items-center gap-4">
+        <%= image_tag(@user.try(:avatar_url).presence || "sample.jpg",
+                      alt: "", class: "h-16 w-16 rounded-full border border-gray-600") %>
+        <div>
+          <h1 class="text-2xl font-bold"><%= @user.nickname.presence || "名無し" %></h1>
+          <p class="text-gray-400 text-sm"><%= @user.email %></p>
+        </div>
+        <div class="ml-auto">
+          <%= link_to "プロフィール編集", edit_user_path(@user), class: "text-sm px-3 py-1.5 rounded bg-gray-700 hover:bg-gray-600" %>
+        </div>
+      </div>
+
+      <!-- 簡易ステータス -->
+      <div class="mt-4 grid grid-cols-3 gap-4 text-center">
+        <div class="bg-gray-700/60 rounded p-3">
+          <div class="text-xl font-bold"><%= @posts.size %></div>
+          <div class="text-gray-300 text-xs">投稿数</div>
+        </div>
+        <div class="bg-gray-700/60 rounded p-3">
+          <div class="text-xl font-bold"><%= @posts.map(&:song_id).uniq.size %></div>
+          <div class="text-gray-300 text-xs">曲の数</div>
+        </div>
+        <div class="bg-gray-700/60 rounded p-3">
+          <div class="text-xl font-bold"><%= @posts.first&.created_at&.strftime("%Y/%m/%d") || "-" %></div>
+          <div class="text-gray-300 text-xs">最新の投稿</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 投稿一覧 -->
+    <section>
+      <h2 class="text-xl font-semibold mb-4">あなたの投稿</h2>
+
+      <% if @posts.any? %>
+        <div class="space-y-4">
+          <% @posts.each do |post| %>
+            <div class="bg-gray-800 rounded-lg shadow p-4 flex gap-4">
+              <%= image_tag(post.song.album_art_url, alt: "",
+                            class: "h-20 w-20 rounded object-cover flex-shrink-0",
+                            loading: "lazy", decoding: "async") %>
+
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center justify-between gap-3">
+                  <p class="font-bold truncate">
+                    <%= post.song.title %> - <span class="text-gray-300"><%= post.song.artist %></span>
+                  </p>
+                  <span class="text-xs text-gray-400 flex-shrink-0">
+                    <%= post.created_at.strftime("%Y/%m/%d %H:%M") %>
+                  </span>
+                </div>
+                <p class="text-gray-200 mt-1 break-words">
+                  <%= truncate(post.memory_text, length: 120) %>
+                </p>
+
+                <div class="mt-3 flex items-center gap-3">
+                  <%= link_to "詳細を見る", post_path(post),
+                      class: "text-purple-400 hover:underline text-sm" %>
+                  <%= link_to "Spotifyで聴く", post.song.spotify_url, target: "_blank", rel: "noopener",
+                      class: "text-green-400 hover:text-green-300 text-sm" %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <%# Kaminari/Pagy 等を入れたらここにページネーション %>
+        <%#= paginate @posts %>
+        <%#= pagy_nav(@pagy) if defined?(pagy_nav) %>
+      <% else %>
+        <div class="bg-gray-800 rounded-lg p-6 text-center text-gray-300">
+          <p>まだ投稿がありません。</p>
+          <%= link_to "最初の投稿を作成", new_post_path, class: "text-purple-400 hover:underline block mt-2" %>
+        </div>
+      <% end %>
+    </section>
+
+  </div>
+</div>

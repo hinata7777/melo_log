@@ -1,0 +1,29 @@
+<div class="max-w-lg mx-auto bg-gray-800 p-6 rounded-lg shadow-lg">
+  <h1 class="text-2xl font-bold mb-4 text-white">プロフィール編集</h1>
+
+  <%= form_with model: @user, local: true do |f| %>
+    <div class="mb-4">
+      <%= f.label :nickname, "ニックネーム", class: "block text-gray-300 mb-1" %>
+      <%= f.text_field :nickname, class: "w-full p-2 rounded bg-gray-700 text-white" %>
+    </div>
+
+    <div class="mb-4">
+      <%= f.label :email, "メールアドレス", class: "block text-gray-300 mb-1" %>
+      <%= f.email_field :email, class: "w-full p-2 rounded bg-gray-700 text-white" %>
+    </div>
+
+    <div class="mb-4">
+      <%= f.label :password, "新しいパスワード（変更しない場合は空欄）", class: "block text-gray-300 mb-1" %>
+      <%= f.password_field :password, class: "w-full p-2 rounded bg-gray-700 text-white" %>
+    </div>
+
+    <div class="mb-4">
+      <%= f.label :password_confirmation, "パスワード確認", class: "block text-gray-300 mb-1" %>
+      <%= f.password_field :password_confirmation, class: "w-full p-2 rounded bg-gray-700 text-white" %>
+    </div>
+
+    <div>
+      <%= f.submit "更新する", class: "bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded" %>
+    </div>
+  <% end %>
+</div>
