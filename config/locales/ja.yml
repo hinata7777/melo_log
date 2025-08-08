@@ -1,0 +1,6 @@
+ja:
+  activerecord:
+    attributes:
+      post:
+        song: 曲
+        memory_text: 思い出メモ
