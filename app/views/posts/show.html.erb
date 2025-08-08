@@ -44,13 +44,26 @@
       <%= link_to "もう一度投稿する", new_post_path, class: "text-gray-400 hover:underline text-sm" %>
     </div>
 
-    <!-- 追加部分：登録誘導 -->
+    <!-- 追加部分：条件分岐で導線を出し分け -->
     <div class="mt-10 border-t border-gray-700 pt-6">
-      <p class="text-gray-300 mb-3 text-sm">
-        ユーザー登録すると、投稿をマイページで管理できるよ！
-      </p>
-      <%= link_to "アカウントを作成する", new_user_path,
-        class: "bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow-md inline-block mb-4" %>
+      <% if !logged_in? %>
+        <!-- 未ログイン -->
+        <p class="text-gray-300 mb-3 text-sm">
+          ユーザー登録すると、投稿をマイページで管理できるよ！
+        </p>
+        <%= link_to "アカウントを作成する", new_user_path,
+          class: "bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow-md inline-block mb-4" %>
+
+      <% elsif current_user&.id == @post.user_id %>
+        <!-- ログイン済 & 自分の投稿 -->
+        <%= link_to "#{current_user.nickname.presence || 'あなた'}のマイページへ", user_path(current_user),
+          class: "bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg shadow-md inline-block mb-4" %>
+
+      <% else %>
+        <!-- ログイン済 & 他人の投稿 -->
+        <%= link_to "#{@post.user.nickname} さんの投稿一覧を見る", user_path(@post.user),
+          class: "bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg shadow-md inline-block mb-4" %>
+      <% end %>
     </div>
   </div>
 </div>

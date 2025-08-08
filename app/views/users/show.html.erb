@@ -16,14 +16,10 @@
       </div>
 
       <!-- 簡易ステータス -->
-      <div class="mt-4 grid grid-cols-3 gap-4 text-center">
+      <div class="mt-4 grid grid-cols-2 gap-4 text-center">
         <div class="bg-gray-700/60 rounded p-3">
           <div class="text-xl font-bold"><%= @posts.size %></div>
           <div class="text-gray-300 text-xs">投稿数</div>
-        </div>
-        <div class="bg-gray-700/60 rounded p-3">
-          <div class="text-xl font-bold"><%= @posts.map(&:song_id).uniq.size %></div>
-          <div class="text-gray-300 text-xs">曲の数</div>
         </div>
         <div class="bg-gray-700/60 rounded p-3">
           <div class="text-xl font-bold"><%= @posts.first&.created_at&.strftime("%Y/%m/%d") || "-" %></div>
