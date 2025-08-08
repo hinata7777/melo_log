@@ -6,36 +6,38 @@ class PostsController < ApplicationController
   end
   
   def create
-    # 1. 送られてきた曲情報を取得
-    spotify_id = params[:spotify_id]
-    title = params[:title]
-    artist = params[:artist]
-    album_art_url = params[:album_art_url]
-    spotify_url = params[:spotify_url]
-
-    # 2. 既存のSongがあるかチェック、なければ作成
-    song = Song.find_or_create_by(spotify_id: spotify_id) do |s|
-      s.title = title
-      s.artist = artist
-      s.album_art_url = album_art_url
-      s.spotify_url = spotify_url
+    # spotify_id があれば曲を作成/取得。なければ song=nil のまま → モデルのpresenceで弾く
+    song = if params[:spotify_id].present?
+      Song.find_or_create_by!(spotify_id: params[:spotify_id]) do |s|
+        s.title         = params[:title]
+        s.artist        = params[:artist]
+        s.album_art_url = params[:album_art_url]
+        s.spotify_url   = params[:spotify_url]
+      end
     end
 
-    # 3. Postを作成（ログイン時のみ current_user をセット）
-    @post = Post.new(
-      song_id: song.id,
-      memory_text: params[:post][:memory_text]
-    )
+    # Post作成
+    @post = Post.new(post_params.merge(song: song))
     @post.user = current_user if logged_in?
 
     if @post.save
-      redirect_to @post, notice: "投稿が完了しました！"
+      redirect_to @post, notice: "MeloLogを投稿しました！"
     else
       render :new, status: :unprocessable_entity
     end
+  rescue ActiveRecord::RecordInvalid => e
+    @post ||= Post.new(post_params)
+    e.record.errors.each { |attr, msg| @post.errors.add(attr, msg) }
+    render :new, status: :unprocessable_entity
   end
 
   def show
     @post = Post.find(params[:id])
+  end
+
+  private
+
+  def post_params
+    params.require(:post).permit(:memory_text)
   end
 end
