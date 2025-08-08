@@ -2,28 +2,42 @@
   <div class="bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-lg text-center">
 
     <!-- 曲情報 -->
-    <img src="<%= @post.song.album_art_url %>" class="mx-auto w-32 h-32 rounded mb-4">
+    <%= image_tag @post.song.album_art_url,
+        alt: "#{@post.song.title} のアルバムアート",
+        class: "mx-auto w-32 h-32 rounded mb-4",
+        loading: "lazy", decoding: "async" %>
     <h1 class="text-2xl font-bold"><%= @post.song.title %></h1>
     <p class="text-gray-400 mb-6"><%= @post.song.artist %></p>
 
     <!-- 思い出テキスト -->
     <p class="bg-gray-700 p-4 rounded"><%= @post.memory_text %></p>
 
-    <!-- Spotifyリンク -->
-    <a href="<%= @post.song.spotify_url %>" target="_blank"
-       class="block mt-6 text-green-400 hover:text-green-300">
-      Spotifyで聴く
-    </a>
+    <%# 共通ボタンクラス（見た目は変わらない） %>
+    <% btn_base = "inline-flex items-center text-white px-4 py-2 rounded-lg shadow-md justify-center" %>
 
-    <!-- Xシェアリンク -->
-    <% share_text = "MeloLogを投稿したよ！ #MeloLog\n#{@post.song.title} - #{@post.song.artist}" %>
+    <div class="flex flex-col items-center gap-4">
+      <!-- Spotifyリンク -->
+      <a href="<%= @post.song.spotify_url %>" target="_blank"
+         rel="noopener noreferrer"
+         aria-label="Spotifyで聴く"
+         class="mt-6 bg-[#1DB954] hover:bg-green-600 <%= btn_base %>">
+        <%= image_tag "spotify-logo.png", alt: "Spotifyロゴ", size: "96x96" %>
+        &ensp;で聴く
+      </a>
 
-    <a href="https://twitter.com/intent/tweet?text=<%= CGI.escape(share_text) %>%0A&url=<%= post_url(@post) %>"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="mt-6 inline-flex items-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md">
-      <%= image_tag("x-logo.png", alt: "Xロゴ", size: "20x20") %>&ensp;でシェアする
-    </a>
+      <!-- Xシェアリンク -->
+      <% share_text   = "MeloLogを投稿したよ！ #MeloLog\n#{@post.song.title} - #{@post.song.artist}" %>
+      <% encoded_text = ERB::Util.url_encode(share_text + "\n") %>
+      <% encoded_url  = ERB::Util.url_encode(post_url(@post)) %>
+      <a href="https://twitter.com/intent/tweet?text=<%= encoded_text %>&url=<%= encoded_url %>"
+         target="_blank"
+         rel="noopener noreferrer"
+         aria-label="Xでシェアする"
+         class="bg-blue-500 hover:bg-blue-600 <%= btn_base %>">
+        <%= image_tag "x-logo.png", alt: "Xロゴ", size: "20x20" %>
+        &ensp;でシェアする
+      </a>
+    </div>
 
     <!-- 再投稿リンク -->
     <div class="mt-6">
