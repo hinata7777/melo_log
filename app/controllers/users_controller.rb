@@ -23,17 +23,17 @@ class UsersController < ApplicationController
   end
 
   def edit
-    @user = current_user
-  end
+  @user = current_user
+end
 
-  def update
-    @user = current_user
-    if @user.update(user_params)
-      redirect_to @user, notice: 'プロフィールを更新しました！'
-    else
-      render :edit, status: :unprocessable_entity
-    end
+def update
+  @user = current_user
+  if @user.update(user_params)
+    redirect_to @user, notice: 'プロフィールを更新しました！'
+  else
+    render :edit, status: :unprocessable_entity
   end
+end
 
   private
 
