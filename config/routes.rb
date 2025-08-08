@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   root "home#index"
-  resources :posts, only: %i[new create show] do
+  resources :posts, only: %i[new create show destroy] do
     member do
       get :og_image
     end

@@ -62,6 +62,11 @@
                       class: "text-purple-400 hover:underline text-sm" %>
                   <%= link_to "Spotifyで聴く", post.song.spotify_url, target: "_blank", rel: "noopener",
                       class: "text-green-400 hover:text-green-300 text-sm" %>
+                  <%= button_to "削除する", post_path(post),
+                      method: :delete,
+                      data: { turbo_confirm: "この投稿を削除します。よろしいですか？" },
+                      form: { class: "inline-block" },
+                      class: "text-red-400 hover:text-red-300 text-sm" %>
                 </div>
               </div>
             </div>

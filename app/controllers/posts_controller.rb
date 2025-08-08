@@ -1,5 +1,7 @@
 class PostsController < ApplicationController
   skip_before_action :require_login, only: %i[new create show]
+  before_action :set_post, only: :destroy
+  before_action :authorize_owner!, only: :destroy
 
   def new
     @post = Post.new
@@ -35,9 +37,25 @@ class PostsController < ApplicationController
     @post = Post.find(params[:id])
   end
 
+  def destroy
+    @post.destroy!
+    redirect_to user_path(current_user), notice: "投稿を削除しました"
+  end
+
   private
 
   def post_params
     params.require(:post).permit(:memory_text)
+  end
+
+  def set_post
+    @post = Post.find(params[:id])
+  end
+
+  def authorize_owner!
+    # 自分の投稿だけ削除可
+    unless @post.user_id == current_user.id
+      redirect_to user_path(current_user), alert: "権限がありません。"
+    end
   end
 end

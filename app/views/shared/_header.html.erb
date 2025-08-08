@@ -20,7 +20,7 @@
                             class: "h-10 w-10 rounded-full border border-gray-600", alt: "") %>
             </button>
             <div class="hidden absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded shadow-lg" id="dropdown-menu">
-              <div class="px-4 py-2 text-sm text-gray-400 border-b border-gray-700"><%= current_user.try(:name) || "マイページ" %></div>
+              <div class="px-4 py-2 text-sm text-gray-400 border-b border-gray-700"><%= current_user.try(:nickname) || "マイページ" %></div>
               <%= link_to "マイページ", user_path(current_user), class: "block px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white" %>
               <%= link_to "ログアウト", logout_path, data: { turbo_method: :delete }, class: "block px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white" %>
             </div>

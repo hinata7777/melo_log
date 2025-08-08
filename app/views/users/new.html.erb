@@ -1,7 +1,7 @@
 <div class="min-h-[calc(100vh-120px)] flex items-center justify-center">
   <div class="bg-gray-800 rounded-2xl shadow-lg p-8 w-full max-w-md mx-auto text-white">
     <!-- タイトル -->
-    <h1 class="text-3xl font-extrabold text-center mb-6">🎵 ユーザー登録</h1>
+    <h1 class="text-3xl font-extrabold text-center mb-6">ユーザー登録</h1>
 
     <!-- エラーメッセージ -->
     <% if @user.errors.any? %>
@@ -53,7 +53,7 @@
 
     <!-- ログインリンク -->
     <div class="text-center mt-6">
-      <%= link_to 'ログインはこちら', login_path,
+      <%= link_to 'アカウントをお持ちの方はこちら', login_path,
                   class: "text-sm text-gray-400 hover:text-white transition duration-150" %>
     </div>
   </div>
