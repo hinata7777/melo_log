@@ -4,3 +4,8 @@ ja:
       post:
         song: 曲
         memory_text: 思い出メモ
+      user:
+        email: メールアドレス
+        password: パスワード
+        password_confirmation: パスワード確認
+        nickname: ニックネーム

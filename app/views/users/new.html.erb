@@ -4,11 +4,11 @@
     <h1 class="text-3xl font-extrabold text-center mb-6">ユーザー登録</h1>
 
     <!-- エラーメッセージ -->
-    <% if @user.errors.any? %>
-      <div class="bg-red-500 text-white p-3 rounded mb-4 text-sm">
-        <ul class="mb-0 list-disc list-inside">
-          <% @user.errors.full_messages.each do |message| %>
-            <li><%= message %></li>
+    <% if @user&.errors&.any? %>
+      <div class="bg-red-900/40 text-red-100 rounded p-3 mb-4">
+        <ul class="list-none pl-0">
+          <% @user.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
           <% end %>
         </ul>
       </div>
