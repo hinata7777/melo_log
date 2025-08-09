@@ -46,8 +46,7 @@ gem 'omniauth-rails_csrf_protection'
 # Spotify API用
 gem 'httparty'
 
-# スタイリ
-# gem 'tailwindcss-rails'
+gem 'rails-i18n', '~> 7.0.0'
 
 gem 'dotenv-rails'
 
