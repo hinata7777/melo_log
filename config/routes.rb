@@ -11,6 +11,9 @@ Rails.application.routes.draw do
   post 'login', to: 'user_sessions#create'
   delete 'logout', to: 'user_sessions#destroy'
 
+  get '/terms',   to: 'static_pages#terms',   as: :terms
+  get '/privacy', to: 'static_pages#privacy', as: :privacy
+
   get 'songs/search', to: 'songs#search', as: 'search_songs'
   
   get "up" => "rails/health#show", as: :rails_health_check

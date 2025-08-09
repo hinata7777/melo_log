@@ -1,7 +1,5 @@
 class UsersController < ApplicationController
-  # 未ログインでも new/create/show は見られる
-  skip_before_action :require_login, only: %i[new create show]
-
+  before_action :require_login, only: %i[edit update]
   before_action :set_user, only: %i[show edit update]
   before_action :require_login, only: %i[edit update]
   before_action :ensure_owner!, only: %i[edit update]
