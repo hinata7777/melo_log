@@ -1,5 +1,5 @@
 class PostsController < ApplicationController
-  skip_before_action :require_login, only: %i[new create show]
+  before_action :require_login, only: :destroy
   before_action :set_post, only: :destroy
   before_action :authorize_owner!, only: :destroy
 
