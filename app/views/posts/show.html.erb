@@ -9,8 +9,18 @@
     <h1 class="text-2xl font-bold"><%= @post.song.title %></h1>
     <p class="text-gray-400 mb-6"><%= @post.song.artist %></p>
 
+    <!-- 投稿者ラベル -->
+    <% if @post.user.present? %>
+      <div class="mt-2 flex items-center justify-center text-sm text-gray-400 gap-2">
+        <span>投稿者：</span>
+        <%= link_to @post.user.nickname.presence || "ゲスト",
+              user_path(@post.user),
+              class: "text-purple-400 hover:underline" %>
+      </div>
+    <% end %>
+
     <!-- 思い出テキスト -->
-    <p class="bg-gray-700 p-4 rounded"><%= @post.memory_text %></p>
+    <p class="mt-6 bg-gray-700 p-4 rounded"><%= @post.memory_text %></p>
 
     <%# 共通ボタンクラス（見た目は変わらない） %>
     <% btn_base = "inline-flex items-center text-white px-4 py-2 rounded-lg shadow-md justify-center" %>
@@ -45,25 +55,14 @@
     </div>
 
     <!-- 追加部分：条件分岐で導線を出し分け -->
-    <div class="mt-10 border-t border-gray-700 pt-6">
-      <% if !logged_in? %>
-        <!-- 未ログイン -->
+    <% if !logged_in? %>
+      <div class="mt-10 border-t border-gray-700 pt-6 flex flex-col items-center gap-3">
         <p class="text-gray-300 mb-3 text-sm">
           ユーザー登録すると、投稿をマイページで管理できるよ！
         </p>
         <%= link_to "アカウントを作成する", new_user_path,
-          class: "bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow-md inline-block mb-4" %>
-
-      <% elsif current_user&.id == @post.user_id %>
-        <!-- ログイン済 & 自分の投稿 -->
-        <%= link_to "#{current_user.nickname.presence || 'あなた'}のマイページへ", user_path(current_user),
-          class: "bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg shadow-md inline-block mb-4" %>
-
-      <% else %>
-        <!-- ログイン済 & 他人の投稿 -->
-        <%= link_to "#{@post.user.nickname} さんの投稿一覧を見る", user_path(@post.user),
-          class: "bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg shadow-md inline-block mb-4" %>
-      <% end %>
-    </div>
+          class: "bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow-md inline-block" %>
+      </div>
+    <% end %>
   </div>
 </div>
