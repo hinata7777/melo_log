@@ -20,7 +20,9 @@
     <% end %>
 
     <!-- 思い出テキスト -->
-    <p class="mt-6 bg-gray-700 p-4 rounded"><%= @post.memory_text %></p>
+    <div class="mt-6 bg-gray-700 p-4 rounded">
+      <%= simple_format(@post.memory_text) %>
+    </div>
 
     <%# 共通ボタンクラス（見た目は変わらない） %>
     <% btn_base = "inline-flex items-center text-white px-4 py-2 rounded-lg shadow-md justify-center" %>
