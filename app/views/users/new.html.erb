@@ -21,6 +21,7 @@
         <%= f.label :nickname, 'ニックネーム', class: "block mb-1 text-sm" %>
         <%= f.text_field :nickname,
               class: "w-full p-3 rounded bg-gray-900 border border-gray-600 placeholder-gray-500 focus:border-green-500 focus:outline-none" %>
+        <p class="text-xs text-gray-400 mb-1">10文字以内</p>
       </div>  
       
       <!-- メールアドレス -->
@@ -28,20 +29,31 @@
         <%= f.label :email, 'メールアドレス', class: "block mb-1 text-sm" %>
         <%= f.email_field :email,
               class: "w-full p-3 rounded bg-gray-900 border border-gray-600 placeholder-gray-500 focus:border-green-500 focus:outline-none" %>
+        <p class="text-xs text-gray-400 mb-1">例：name@example.com</p>
       </div>
 
       <!-- パスワード -->
       <div>
         <%= f.label :password, 'パスワード', class: "block mb-1 text-sm" %>
         <%= f.password_field :password,
-              class: "w-full p-3 rounded bg-gray-900 border border-gray-600 placeholder-gray-500 focus:border-green-500 focus:outline-none" %>
+              class: "w-full p-3 rounded bg-gray-900 border border-gray-600 placeholder-gray-500 focus:border-green-500 focus:outline-none",
+              minlength: 8, required: true, autocomplete: "new-password",
+              "aria-describedby": "password-help" %>
+        <p id="password-help" class="mt-1 text-xs text-gray-400">
+          8文字以上（英字と数字の組み合わせ推奨）
+        </p>
       </div>
 
       <!-- パスワード確認 -->
       <div>
         <%= f.label :password_confirmation, 'パスワード確認', class: "block mb-1 text-sm" %>
         <%= f.password_field :password_confirmation,
-              class: "w-full p-3 rounded bg-gray-900 border border-gray-600 placeholder-gray-500 focus:border-green-500 focus:outline-none" %>
+              class: "w-full p-3 rounded bg-gray-900 border border-gray-600 placeholder-gray-500 focus:border-green-500 focus:outline-none",
+              minlength: 8, required: true, autocomplete: "new-password",
+              "aria-describedby": "password-confirm-help" %>
+        <p id="password-confirm-help" class="mt-1 text-xs text-gray-400">
+          上と同じパスワードを入力してください
+        </p>
       </div>
 
       <!-- 登録ボタン -->

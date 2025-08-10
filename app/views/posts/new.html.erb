@@ -55,7 +55,7 @@
       <%= hidden_field_tag :album_art_url, nil, data: { turbo_permanent: true } %>
       <%= hidden_field_tag :spotify_url, nil, data: { turbo_permanent: true } %>
 
-      <%= f.text_area :memory_text, placeholder: "この曲の思い出を書こう",
+      <%= f.text_area :memory_text, placeholder: "この曲の思い出を書こう（300文字以内）",
                        class: "w-full p-3 rounded bg-gray-900 border border-white text-white placeholder-gray-400 mb-4" %>
       <%= f.submit "投稿する", class: "bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-md" %>
     <% end %>
