@@ -68,8 +68,7 @@
                     <%= button_to "削除", post_path(post),
                         method: :delete,
                         params: { page: params[:page] },
-                        data: { turbo_confirm: "この投稿を削除します。よろしいですか？" },
-                        form: { class: "inline-block" },
+                        form: { class: "inline-block", data: { turbo_confirm: "この投稿を削除します。よろしいですか？" } },
                         class: "text-red-400 hover:text-red-300 text-sm" %>
                   <% end %>
                 </div>
