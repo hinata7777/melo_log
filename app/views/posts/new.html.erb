@@ -59,5 +59,16 @@
                        class: "w-full p-3 rounded bg-gray-900 border border-white text-white placeholder-gray-400 mb-4" %>
       <%= f.submit "投稿する", class: "bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-md" %>
     <% end %>
+
+    <% unless logged_in? %>
+      <div class="mt-10 border-t border-gray-700 pt-6 flex flex-col items-center gap-2 text-center">
+        <p class="text-gray-400 text-xs">
+          ユーザー登録すると、投稿をマイページで管理できるよ！
+        </p>
+        <%= link_to "アカウントを作成",
+            new_user_path,
+            class: "text-purple-400 hover:underline text-sm mt-2" %>
+      </div>
+    <% end %>
   </div>
 </div>
