@@ -1,0 +1,21 @@
+/* ==== Pagy nav (centered + dark theme) ==== */
+nav.pagy {
+  @apply flex justify-center items-center gap-2 mt-6 text-sm text-gray-300;
+}
+.pagy a:not(.gap) {
+  @apply inline-flex items-center justify-center rounded-xl px-3 py-1.5
+         bg-gray-700/80 border border-gray-600/50;
+}
+.pagy a:not(.gap):hover {
+  @apply bg-gray-600 border-gray-500;
+}
+.pagy a[aria-disabled="true"] {
+  @apply text-gray-500 bg-gray-800 border-gray-700 cursor-not-allowed;
+}
+/* 現在ページ（どちらの書き方にも対応） */
+.pagy a:not(.gap).current,
+.pagy a[aria-current="page"] {
+  @apply text-white bg-purple-500 border-transparent; /* ←色はお好みで */
+}
+/* 入力型ナビを使わないなら非表示 */
+.pagy label { @apply hidden; }

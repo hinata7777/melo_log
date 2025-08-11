@@ -20,11 +20,13 @@
       <!-- 簡易ステータス -->
       <div class="mt-4 grid grid-cols-2 gap-4 text-center">
         <div class="bg-gray-700/60 rounded p-3">
-          <div class="text-xl font-bold"><%= @posts.size %></div>
+          <div class="text-xl font-bold"><%= @posts_count %></div>
           <div class="text-gray-300 text-xs">投稿数</div>
         </div>
         <div class="bg-gray-700/60 rounded p-3">
-          <div class="text-xl font-bold"><%= @posts.first&.created_at&.in_time_zone('Asia/Tokyo')&.strftime("%Y/%m/%d") || "-" %></div>
+          <div class="text-xl font-bold">
+            <%= @latest_post_at.present? ? @latest_post_at.in_time_zone('Asia/Tokyo').strftime("%Y/%m/%d") : "-" %>
+          </div>
           <div class="text-gray-300 text-xs">最新の投稿</div>
         </div>
       </div>
@@ -63,6 +65,7 @@
                   <% if current_user == @user %>
                     <%= button_to "削除", post_path(post),
                         method: :delete,
+                        params: { page: params[:page] },
                         data: { turbo_confirm: "この投稿を削除します。よろしいですか？" },
                         form: { class: "inline-block" },
                         class: "text-red-400 hover:text-red-300 text-sm" %>
@@ -73,9 +76,12 @@
           <% end %>
         </div>
 
-        <%# Kaminari/Pagy 等を入れたらここにページネーション %>
-        <%#= paginate @posts %>
-        <%#= pagy_nav(@pagy) if defined?(pagy_nav) %>
+        <!-- ページネーション -->
+        <% if @pagy.pages > 1 %>
+          <div class="mt-6">
+            <%== pagy_nav(@pagy) %>
+          </div>
+        <% end %>
       <% else %>
         <div class="bg-gray-800 rounded-lg p-6 text-center text-gray-300">
           <p>まだ投稿がありません。</p>

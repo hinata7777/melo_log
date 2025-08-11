@@ -39,7 +39,7 @@ class PostsController < ApplicationController
 
   def destroy
     @post.destroy!
-    redirect_to user_path(current_user), notice: "投稿を削除しました"
+    redirect_to user_path(current_user, page: params[:page]), notice: "投稿を削除しました"
   end
 
   private
