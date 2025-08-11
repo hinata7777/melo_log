@@ -1,7 +1,7 @@
 class PostsController < ApplicationController
-  before_action :require_login, only: :destroy
-  before_action :set_post, only: :destroy
-  before_action :authorize_owner!, only: :destroy
+  before_action :require_login, only: %i[edit update destroy]
+  before_action :set_post, only: %i[show edit update destroy]
+  before_action :authorize_owner!, only: %i[edit update destroy]
 
   def new
     @post = Post.new
@@ -33,8 +33,17 @@ class PostsController < ApplicationController
     render :new, status: :unprocessable_entity
   end
 
-  def show
-    @post = Post.find(params[:id])
+  def show; end
+
+  def edit; end
+
+  def update
+    if @post.update(post_text_params) # memory_text のみ許可
+      redirect_to user_path(@post.user, page: params[:page]),
+                  notice: "投稿テキストを更新しました"
+    else
+      render :edit, status: :unprocessable_entity
+    end
   end
 
   def destroy
@@ -45,6 +54,10 @@ class PostsController < ApplicationController
   private
 
   def post_params
+    params.require(:post).permit(:memory_text)
+  end
+
+  def post_text_params
     params.require(:post).permit(:memory_text)
   end
 

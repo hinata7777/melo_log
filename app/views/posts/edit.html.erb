@@ -1,0 +1,27 @@
+<div class="min-h-screen bg-gray-900 text-white p-6">
+  <div class="max-w-2xl mx-auto bg-gray-800 rounded-xl shadow p-6 space-y-5">
+    <h1 class="text-xl font-bold text-center">テキストを編集</h1>
+
+    <!-- ★ 選択中の曲を表示（詳細と統一） -->
+    <%= render "song_card", post: @post %>
+
+    <%= form_with model: @post, url: post_path(@post, page: params[:page]), method: :patch do |f| %>
+      <%= f.text_area :memory_text, rows: 6,
+            class: "w-full rounded-lg bg-gray-900 border border-gray-700 p-3 text-sm text-gray-100" %>
+
+      <% if @post.errors.any? %>
+        <ul class="mt-2 text-sm text-red-300">
+          <% @post.errors.full_messages.each do |m| %><li><%= m %></li><% end %>
+        </ul>
+      <% end %>
+
+      <div class="mt-4 flex gap-2">
+        <%= f.submit "保存", class: "px-3 py-1.5 rounded bg-purple-600 hover:bg-purple-500 text-white text-sm" %>
+        <%= link_to "キャンセル", user_path(@post.user, page: params[:page]),
+              class: "px-3 py-1.5 rounded bg-gray-700 hover:bg-gray-600 text-sm" %>
+        <%= link_to "投稿詳細へ", post_path(@post),
+              class: "px-3 py-1.5 rounded bg-gray-700 hover:bg-gray-600 text-sm ml-auto" %>
+      </div>
+    <% end %>
+  </div>
+</div>
