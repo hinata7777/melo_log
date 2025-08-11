@@ -59,10 +59,12 @@
 
                 <div class="mt-3 flex items-center gap-3">
                   <%= link_to "詳細", post_path(post),
-                      class: "text-purple-400 hover:underline text-sm" %>
+                      class: "text-purple-400 hover:text-purple-300 text-sm" %>
                   <%= link_to "Spotifyで聴く", post.song.spotify_url, target: "_blank", rel: "noopener",
                       class: "text-green-400 hover:text-green-300 text-sm" %>
                   <% if current_user == @user %>
+                    <%= link_to "編集", edit_post_path(post, page: params[:page]),
+                          class: "text-blue-400 hover:text-blue-300 text-sm" %>
                     <%= button_to "削除", post_path(post),
                         method: :delete,
                         params: { page: params[:page] },

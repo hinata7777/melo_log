@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   root "home#index"
-  resources :posts, only: %i[new create show destroy] do
+  resources :posts, only: %i[new create show edit update destroy] do
     member do
       get :og_image
     end
@@ -13,7 +13,6 @@ Rails.application.routes.draw do
 
   get '/terms',   to: 'static_pages#terms',   as: :terms
   get '/privacy', to: 'static_pages#privacy', as: :privacy
-
   get 'songs/search', to: 'songs#search', as: 'search_songs'
   
   get "up" => "rails/health#show", as: :rails_health_check
