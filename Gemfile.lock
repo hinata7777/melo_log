@@ -215,6 +215,7 @@ GEM
     omniauth-rails_csrf_protection (1.0.2)
       actionpack (>= 4.2)
       omniauth (~> 2.0)
+    pagy (9.3.5)
     parallel (1.27.0)
     parser (3.3.8.0)
       ast (~> 2.4.1)
@@ -407,6 +408,7 @@ DEPENDENCIES
   omniauth
   omniauth-google-oauth2
   omniauth-rails_csrf_protection
+  pagy
   pg (~> 1.1)
   puma (>= 5.0)
   rails (~> 7.2.2, >= 7.2.2.1)

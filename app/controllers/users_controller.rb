@@ -1,7 +1,6 @@
 class UsersController < ApplicationController
   before_action :require_login, only: %i[edit update]
   before_action :set_user, only: %i[show edit update]
-  before_action :require_login, only: %i[edit update]
   before_action :ensure_owner!, only: %i[edit update]
 
   def new
@@ -20,7 +19,15 @@ class UsersController < ApplicationController
 
   # ★ 公開マイページ
   def show
-    @posts = @user.posts.includes(:song).order(created_at: :desc)
+    # ページネーション（5件/ページ）
+    @pagy, @posts = pagy(
+      @user.posts.includes(:song).order(created_at: :desc),
+      items: 5, 
+      page: params[:page]
+    )
+    # 総投稿数＆最新投稿日時（ページングに依存しない）
+    @posts_count    = @pagy.count
+    @latest_post_at = @user.posts.maximum(:created_at)
   end
 
   def edit; end
