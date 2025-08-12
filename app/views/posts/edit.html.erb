@@ -3,7 +3,24 @@
     <h1 class="text-xl font-bold text-center">テキストを編集</h1>
 
     <!-- ★ 選択中の曲を表示（詳細と統一） -->
-    <%= render "song_card", post: @post %>
+    <% if @post&.song %>
+      <div class="bg-gray-800 rounded-lg p-4 flex gap-4 items-center">
+        <%= image_tag(@post.song.album_art_url, alt: "",
+                      class: "h-20 w-20 rounded object-cover flex-shrink-0",
+                      loading: "lazy", decoding: "async") %>
+
+        <div class="min-w-0">
+          <p class="font-bold truncate">
+            <%= @post.song.title %> - <span class="text-gray-300"><%= @post.song.artist %></span>
+          </p>
+          <div class="mt-1">
+            <%= link_to "Spotifyで聴く", @post.song.spotify_url,
+                        target: "_blank", rel: "noopener",
+                        class: "text-green-400 hover:text-green-300 text-sm" %>
+          </div>
+        </div>
+      </div>
+    <% end %>
 
     <%= form_with model: @post, url: post_path(@post, page: params[:page]), method: :patch do |f| %>
       <%= f.text_area :memory_text, rows: 6,
