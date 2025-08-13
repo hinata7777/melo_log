@@ -20,9 +20,7 @@ RUN apt-get update -qq && \
 ENV RAILS_ENV="production" \
     BUNDLE_DEPLOYMENT="1" \
     BUNDLE_PATH="/usr/local/bundle" \
-    BUNDLE_WITHOUT="development" \
-    RAILS_LOG_TO_STDOUT="true" \
-    RAILS_SERVE_STATIC_FILES="true"
+    BUNDLE_WITHOUT="development"
 
 # Throw-away build stage to reduce size of final image
 FROM base AS build
@@ -57,11 +55,12 @@ COPY . .
 # Precompile bootsnap code for faster boot times
 RUN bundle exec bootsnap precompile app/ lib/
 
-# Precompile assets (no master key needed thanks to dummy secret)
+# Precompiling assets for production without requiring secret RAILS_MASTER_KEY
 RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
 
-# Drop node_modules (keeps image slim; assets already built)
+
 RUN rm -rf node_modules
+
 
 # Final stage for app image
 FROM base
@@ -79,6 +78,6 @@ USER 1000:1000
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
-# Start the server by default (Render provides $PORT; Pumaが拾う)
+# Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
-CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"]
+CMD ["./bin/rails", "server"]
