@@ -77,7 +77,29 @@ Rails.application.configure do
   # Disable caching for Action Mailer templates even if Action Controller
   # caching is enabled.
   config.action_mailer.perform_caching = false
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.raise_delivery_errors = true
 
+  # URL生成に使うホスト名（例: app.melolog.app）
+  config.action_mailer.default_url_options = {
+    host: ENV.fetch("APP_HOST"),   # 例: "app.melolog.app"
+    protocol: "https"
+  }
+  # メール内で使う画像/CSSの絶対URL用（任意）
+  config.action_mailer.asset_host = "https://#{ENV.fetch("APP_HOST")}"
+
+  # SMTP（SendGrid例）
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    address: "smtp.gmail.com",
+    port: 587,
+    domain: "gmail.com",
+    user_name: ENV["SMTP_USERNAME"], # Gmailアドレス
+    password: ENV["SMTP_PASSWORD"],   # アプリパスワード
+    authentication: "plain",
+    enable_starttls_auto: true
+  }
+  config.action_mailer.default_url_options = { host: ENV["APP_HOST"], protocol: "https" }
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
   # config.action_mailer.raise_delivery_errors = false

@@ -17,8 +17,8 @@ class User < ApplicationRecord
   validates :nickname, presence: true, length: { maximum: 10 }
 
   # パスワード（新規 or 変更時のみ必須）
-  with_options if: :password_required? do
-    validates :password, presence: true, length: { minimum: 8 } # ←7より8推奨
+  with_options if: :password_check_needed? do
+    validates :password, presence: true, length: { minimum: 8 } 
     validates :password, confirmation: true
     validates :password_confirmation, presence: true
   end
@@ -30,7 +30,7 @@ class User < ApplicationRecord
   end
 
   # Sorceryはpasswordが仮想属性に入るので、これで十分堅い
-  def password_required?
-    new_record? || password.present?
+  def password_check_needed?
+    new_record? || password.present? || will_save_change_to_crypted_password?
   end
 end

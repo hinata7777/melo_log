@@ -7,6 +7,8 @@ Rails.application.routes.draw do
   end
 
   resources :users, only: %i[new create show edit update]
+  resources :password_resets, only: %i[new create edit update], param: :token
+  
   get 'login', to: 'user_sessions#new'
   post 'login', to: 'user_sessions#create'
   delete 'logout', to: 'user_sessions#destroy'
@@ -16,4 +18,8 @@ Rails.application.routes.draw do
   get 'songs/search', to: 'songs#search', as: 'search_songs'
   
   get "up" => "rails/health#show", as: :rails_health_check
+
+  if Rails.env.development?
+    mount LetterOpenerWeb::Engine, at: "/letter_opener"
+  end
 end
