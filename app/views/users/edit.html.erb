@@ -1,6 +1,23 @@
 <div class="max-w-lg mx-auto bg-gray-800 p-6 rounded-lg shadow-lg">
   <h1 class="text-2xl font-bold mb-4 text-white text-center">ユーザー編集</h1>
 
+  <!-- 画像プレビュー + 画像アップ専用フォーム -->
+  <div class="mb-6 flex items-center gap-4">
+    <%= image_tag avatar_src_for(@user),
+                  class: "h-16 w-16 rounded-full border border-gray-600 object-cover",
+                  alt: "" %>
+
+    <!-- 画像だけ更新するPATCHフォーム（選択したら即送信） -->
+    <%= form_with model: @user, url: update_avatar_user_path(@user), method: :patch,
+                  local: true, html: { multipart: true, class: "inline-block" } do |af| %>
+      <label class="inline-flex items-center px-3 py-2 rounded bg-gray-700 hover:bg-gray-600 cursor-pointer text-white">
+        プロフィール画像を編集
+        <%= af.file_field :avatar_image, accept: "image/*", class: "hidden", onchange: "this.form.submit();" %>
+      </label>
+    <% end %>
+  </div>
+
+  <!-- 通常のユーザー情報更新フォーム -->
   <%= form_with model: @user, local: true do |f| %>
     <div class="mb-4">
       <%= f.label :nickname, "ニックネーム", class: "block text-gray-300 mb-1" %>

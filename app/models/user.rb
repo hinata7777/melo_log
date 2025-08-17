@@ -3,6 +3,8 @@ class User < ApplicationRecord
 
   has_many :posts, dependent: :destroy
 
+  has_one_attached :avatar_image
+
   # emailは前処理で正規化
   before_validation :downcase_email
 
@@ -23,6 +25,11 @@ class User < ApplicationRecord
     validates :password_confirmation, presence: true
   end
 
+  # 表示用: 添付 > デフォルト
+  def avatar_src(variant: nil)
+    avatar_image.attached? ? avatar_image : "avatars/default.png"
+  end
+  
   private
 
   def downcase_email
