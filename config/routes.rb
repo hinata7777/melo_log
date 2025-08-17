@@ -6,7 +6,12 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :users, only: %i[new create show edit update]
+  resources :users, only: %i[new create show edit update] do
+    member do 
+      patch :update_avatar
+    end
+  end
+
   resources :password_resets, only: %i[new create edit update], param: :token
   
   get 'login', to: 'user_sessions#new'

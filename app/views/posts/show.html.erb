@@ -16,6 +16,8 @@
         <%= link_to @post.user.nickname.presence || "ゲスト",
               user_path(@post.user),
               class: "text-purple-400 hover:underline" %>
+        <%= image_tag avatar_src_for(@post.user),
+                  class: "h-6 w-6 rounded-full border border-gray-600 object-cover" %>        
       </div>
     <% end %>
 

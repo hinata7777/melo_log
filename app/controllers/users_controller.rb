@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   before_action :require_login, only: %i[edit update]
-  before_action :set_user, only: %i[show edit update]
+  before_action :set_user, only: %i[show edit update update_avatar]
   before_action :ensure_owner!, only: %i[edit update]
 
   def new
@@ -31,12 +31,24 @@ class UsersController < ApplicationController
   end
 
   def edit; end
-
+  
   def update
     if @user.update(user_params)
       redirect_to @user, notice: 'ユーザー情報を更新しました！'
     else
       render :edit, status: :unprocessable_entity
+    end
+  end
+
+  def update_avatar
+    if params[:user]&.dig(:avatar_image).present?
+      @user.avatar_image.attach(params[:user][:avatar_image])
+      redirect_to edit_user_path(@user), notice: 'プロフィール画像を更新しました'
+    elsif params[:remove] == '1' && @user.avatar_image.attached?
+      @user.avatar_image.purge
+      redirect_to edit_user_path(@user), notice: 'プロフィール画像を削除しました'
+    else
+      redirect_to edit_user_path(@user), alert: '画像ファイルを選択してください'
     end
   end
 
@@ -52,6 +64,6 @@ class UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:nickname, :email, :password, :password_confirmation)
+    params.require(:user).permit(:nickname, :avatar_image, :email, :password, :password_confirmation)
   end
 end
