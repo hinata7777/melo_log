@@ -3,7 +3,7 @@
 
   <!-- 画像プレビュー + 画像アップ専用フォーム -->
   <div class="mb-6 flex items-center gap-4">
-    <%= image_tag avatar_src_for(@user),
+    <%= image_tag avatar_variant_for(@user, size: 128),
                   class: "h-16 w-16 rounded-full border border-gray-600 object-cover",
                   alt: "" %>
 
