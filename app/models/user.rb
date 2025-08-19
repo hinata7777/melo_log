@@ -26,7 +26,7 @@ class User < ApplicationRecord
   end
 
   # 表示用: 添付 > デフォルト
-  def avatar_src(variant: nil)
+  def avatar_src
     avatar_image.attached? ? avatar_image : "avatars/default.png"
   end
   

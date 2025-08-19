@@ -4,8 +4,9 @@
     <!-- プロフィールヘッダー -->
     <section class="bg-gray-800 rounded-xl shadow p-6">
       <div class="flex items-center gap-4">
-        <%= image_tag avatar_src_for(@user),
-                      alt: "", class: "h-16 w-16 rounded-full border border-gray-600 object-cover" %>            
+        <%= image_tag avatar_variant_for(@user, size: 64),
+              class: "h-16 w-16 rounded-full border border-gray-600 object-cover",
+              width: 64, height: 64, loading: "lazy", decoding: "async", alt: "" %>            
         <div>
           <h1 class="text-2xl font-bold"><%= @user.nickname.presence || "名無し" %></h1>
         </div>

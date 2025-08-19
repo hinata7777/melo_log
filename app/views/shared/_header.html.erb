@@ -18,9 +18,9 @@
               data-header-menu-target="avatarBtn"
               data-action="click->header-menu#toggleDropdown"
               class="flex items-center focus:outline-none">
-              <%= image_tag avatar_src_for(current_user),
-                            class: "h-10 w-10 rounded-full border border-gray-600 object-cover",
-                            alt: "" %>
+              <%= image_tag avatar_variant_for(current_user, size: 40),
+                    class: "h-10 w-10 rounded-full border border-gray-600 object-cover",
+                    width: 40, height: 40, loading: "lazy", decoding: "async", alt: "" %>
             </button>
 
             <div

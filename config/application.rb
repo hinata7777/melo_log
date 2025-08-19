@@ -17,6 +17,8 @@ module Myapp
 
     config.active_record.default_timezone = :utc
     
+    config.active_storage.variant_processor = :mini_magick
+    
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
