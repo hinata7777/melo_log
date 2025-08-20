@@ -38,7 +38,7 @@ class PostsController < ApplicationController
   def edit; end
 
   def update
-    if @post.update(post_text_params) # memory_text のみ許可
+    if @post.update(post_params) # memory_text のみ許可
       redirect_to user_path(@post.user, page: params[:page]),
                   notice: "投稿テキストを更新しました"
     else
@@ -54,11 +54,7 @@ class PostsController < ApplicationController
   private
 
   def post_params
-    params.require(:post).permit(:memory_text)
-  end
-
-  def post_text_params
-    params.require(:post).permit(:memory_text)
+    params.require(:post).permit(:memory_text, tag_ids: [])
   end
 
   def set_post
