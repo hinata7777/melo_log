@@ -40,7 +40,7 @@ class PostsController < ApplicationController
   def edit; end
 
   def update
-    if @post.update(post_params) # memory_text のみ許可
+    if @post.update(post_params) # memory_text,tag のみ許可
       redirect_to user_path(@post.user, page: params[:page]),
                   notice: "投稿テキストを更新しました"
     else
