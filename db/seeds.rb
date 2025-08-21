@@ -1,5 +1,7 @@
-%w[夏に聴きたい曲 元気が出る曲 落ち着く曲].each do |n|
-  Tag.find_or_create_by!(name: n) do |t|
-    t.active = true
-  end
+# まずタグを全消し
+Tag.delete_all
+
+# 再登録（常駐3個）
+%w[#アガる曲 #チルタイム #青春ソング].each do |name|
+  Tag.create!(name: name, active: true)
 end

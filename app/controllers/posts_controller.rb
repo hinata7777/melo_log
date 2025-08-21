@@ -33,7 +33,9 @@ class PostsController < ApplicationController
     render :new, status: :unprocessable_entity
   end
 
-  def show; end
+  def show
+    @post = Post.includes(:tags, :song, :user).find(params[:id])
+  end
 
   def edit; end
 

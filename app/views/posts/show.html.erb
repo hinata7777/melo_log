@@ -27,6 +27,17 @@
       <%= simple_format(@post.memory_text) %>
     </div>
 
+    <!-- 選択したタグ表示 -->
+    <% if @post.tags.any? %>
+      <div class="mt-4 flex flex-wrap gap-2 text-sm justify-center">
+        <% @post.tags.each do |tag| %>
+          <%= link_to tag.name, "#",
+                class: "px-3 py-1 rounded-full bg-gray-800 border border-gray-600
+                        text-gray-200 hover:bg-gray-700 transition" %>
+        <% end %>
+      </div>
+    <% end %>
+
     <%# 共通ボタンクラス（見た目は変わらない） %>
     <% btn_base = "inline-flex items-center text-white px-4 py-2 rounded-lg shadow-md justify-center" %>
 
