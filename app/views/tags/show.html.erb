@@ -1,2 +1,89 @@
-<h1>Tags#show</h1>
-<p>Find me in app/views/tags/show.html.erb</p>
+<div class="min-h-screen bg-gray-900 text-white p-6">
+  <div class="max-w-4xl mx-auto space-y-8">
+
+    <!-- ヘッダー（マイページと同じ濃さ） -->
+    <section class="bg-gray-800 rounded-xl shadow p-6">
+      <div class="flex items-center gap-4">
+        <div class="h-16 w-16 rounded-full border border-gray-600 bg-gray-700 grid place-content-center text-2xl font-bold">🎵</div>
+        <h1 class="text-2xl font-bold"><%= @tag.name %></h1>
+        <div class="ml-auto">
+          <%= link_to "タグ一覧へ", tags_path, class: "text-sm px-3 py-1.5 rounded bg-gray-700 hover:bg-gray-600" %>
+        </div>
+      </div>
+
+      <!-- 投稿件数カード -->
+      <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4 text-center">
+        <div class="bg-gray-700/60 rounded p-3">
+          <div class="text-xl font-bold"><%= @posts_count %></div>
+          <div class="text-gray-300 text-xs">投稿数</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 投稿一覧（マイページの縦リストに寄せる。カード色は一段浅く） -->
+    <section>
+      <h2 class="text-xl font-semibold mb-4">このタグのMeloLog</h2>
+
+      <% if @posts.any? %>
+        <div class="space-y-4">
+          <% @posts.each do |post| %>
+            <div class="bg-gray-800 rounded-lg p-4 flex gap-4">
+              <% if post.song&.album_art_url.present? %>
+                <%= image_tag(post.song.album_art_url, alt: "", class: "h-20 w-20 rounded object-cover flex-shrink-0", loading: "lazy", decoding: "async") %>
+              <% else %>
+                <div class="h-20 w-20 rounded bg-gray-600 flex-shrink-0 grid place-content-center text-white/80">♪</div>
+              <% end %>
+
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center justify-between gap-3">
+                  <p class="font-bold truncate">
+                    <%= post.song&.title || "Untitled" %>
+                    <span class="text-gray-400">- <%= post.song&.artist %></span>
+                  </p>
+                  <span class="text-xs text-gray-300/80 flex-shrink-0">
+                    <%= post.created_at.in_time_zone('Asia/Tokyo').strftime("%Y/%m/%d %H:%M") %>
+                  </span>
+                </div>
+
+                <!-- ここだけマイページとの差分：投稿者名を1行だけ -->
+                <div class="mt-1 text-sm text-gray-200">
+                  <% if post.user.present? %>
+                    <% username = post.user.try(:nickname) || post.user.try(:name) || "匿名" %>
+                    <% if defined?(user_path) %>
+                      投稿者：<%= link_to username, user_path(post.user), class: "text-purple-400 hover:underline" %>
+                    <% else %>
+                      投稿者：<%= username %>
+                    <% end %>
+                  <% else %>
+                    投稿者：匿名ユーザー
+                  <% end %>
+                </div>
+
+                <p class="text-gray-100 mt-1 break-words"><%= truncate(post.memory_text.to_s, length: 120) %></p>
+
+                <div class="mt-3 flex items-center gap-3">
+                  <%= link_to "詳細", post_path(post), class: "text-purple-400 hover:text-purple-300 text-sm" %>
+                  <% if post.song&.spotify_url.present? %>
+                    <%= link_to "Spotifyで聴く", post.song.spotify_url, target: "_blank", rel: "noopener", class: "text-green-300 hover:text-green-200 text-sm" %>
+                  <% end %>
+                </div>
+
+                <div class="mt-2 flex flex-wrap gap-2">
+                  <% post.tags.each do |t| %>
+                    <%= link_to "#{t.name}", tag_path(t), class: "text-xs px-2 py-1 rounded bg-gray-600 hover:bg-gray-500" %>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <% if @pagy.pages > 1 %>
+          <div class="mt-6"><%== pagy_nav(@pagy) %></div>
+        <% end %>
+      <% else %>
+        <div class="bg-gray-800 rounded-lg p-6 text-center text-gray-300">このタグの投稿はまだありません。</div>
+      <% end %>
+    </section>
+  </div>
+</div>
