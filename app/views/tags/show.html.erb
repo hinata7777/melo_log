@@ -50,7 +50,7 @@
                   <% if post.user.present? %>
                     <% username = post.user.try(:nickname) || post.user.try(:name) || "匿名" %>
                     <% if defined?(user_path) %>
-                      投稿者：<%= link_to username, user_path(post.user), class: "text-purple-400 hover:underline" %>
+                      投稿者：<%= link_to username, user_path(post.user), class: "text-purple-400hover:underline" %>
                     <% else %>
                       投稿者：<%= username %>
                     <% end %>

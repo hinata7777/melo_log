@@ -1,0 +1,20 @@
+<%= form_with model: [:admin, @tag], class: "space-y-4" do |f| %>
+  <div>
+    <%= f.label :name, "名前", class: "block text-sm font-medium" %>
+    <%= f.text_field :name, class: "mt-1 w-full border rounded-lg p-2" %>
+  </div>
+  <div class="flex items-center gap-2">
+    <%= f.check_box :active, class: "h-4 w-4" %>
+    <%= f.label :active, "有効にする" %>
+  </div>
+  <div>
+    <%= f.label :category, "カテゴリ(数値)", class: "block text-sm font-medium" %>
+    <%= f.select :category,
+        options_for_select([["常駐", "resident"], ["イベント", "event"]], @tag.category),
+        {},
+        class: "mt-1 w-full border rounded-lg p-2" %>
+  </div>
+  <div class="flex justify-end">
+    <%= f.submit class: "px-4 py-2 bg-blue-600 text-white rounded-lg" %>
+  </div>
+<% end %>

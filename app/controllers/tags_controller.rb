@@ -12,7 +12,7 @@ class TagsController < ApplicationController
                       .includes(:song, :tags, :user)  
                       .order(created_at: :desc)
     
-    @pagy, @posts = pagy(posts_scope, items: 12)
+    @pagy, @posts = pagy(posts_scope, items: 5)
     
     @posts_count = @tag.post_tags_count
   end

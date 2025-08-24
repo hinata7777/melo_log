@@ -12,6 +12,13 @@ Rails.application.routes.draw do
     end
   end
 
+  namespace :admin do
+    root "dashboard#index"
+    resources :users, only: %i[index show update]
+    resources :posts, only: %i[index show update destroy]
+    resources :tags
+  end
+
   resources :password_resets, only: %i[new create edit update], param: :token
   
   resources :tags, only: %i[index show]
