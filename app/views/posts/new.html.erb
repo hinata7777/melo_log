@@ -70,12 +70,14 @@
           <% if logged_in? %>
             <div>
               <p class="block text-sm text-gray-400 mb-2">タグ（複数選択可）</p>
-              <div class="mt-4 flex flex-wrap justify-center gap-2">
+              <div class="mt-4 flex flex-wrap justify-center -m-1">
                 <%= f.collection_check_boxes :tag_ids, @resident_tags, :id, :name, include_hidden: false do |b| %>
-                  <%= b.label class: "cursor-pointer" do %>
-                    <%= b.check_box(class: "hidden peer") %>
-                    <span class="px-4 py-2 rounded-full border border-gray-400 text-gray-300
-                                peer-checked:bg-blue-500 peer-checked:text-white peer-checked:border-blue-500 transition">
+                  <%= b.label class: "m-1 inline-flex" do %> 
+                    <%= b.check_box class: "sr-only peer" %> 
+                    <span class="inline-flex items-center whitespace-nowrap
+                                px-4 py-2 rounded-full border border-gray-400 text-gray-300
+                                peer-checked:bg-blue-500 peer-checked:text-white peer-checked:border-blue-500
+                                transition">
                       <%= b.text %>
                     </span>
                   <% end %>
