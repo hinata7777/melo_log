@@ -27,19 +27,20 @@
             class: "w-full rounded-lg bg-gray-900 border border-gray-700 p-3 text-sm text-gray-100" %>
 
       <!-- タグ選択・編集 -->
-      <div class="mt-4 mb-2 flex flex-wrap justify-center gap-2">
+      <div class="mt-4 mb-2 flex flex-wrap justify-center -m-1">
         <%= f.hidden_field :tag_ids, value: [], multiple: true %>
-        <%= f.collection_check_boxes :tag_ids, Tag.where(active: true).order(:name), :id, :name do |b| %>
-          <%= b.label class: "cursor-pointer" do %>
-            <%= b.check_box(class: "hidden peer") %>
-            <span class="px-4 py-2 rounded-full border border-gray-400 text-gray-300
+        <%= f.collection_check_boxes :tag_ids, Tag.where(active: true).order(:name), :id, :name, include_hidden: false do |b| %>
+          <%= b.label class: "m-1 inline-flex" do %>
+            <%= b.check_box class: "sr-only peer" %>
+            <span class="inline-flex items-center whitespace-nowrap
+                        px-4 py-2 rounded-full border border-gray-400 text-gray-300
                         peer-checked:bg-blue-500 peer-checked:text-white peer-checked:border-blue-500
                         transition">
               <%= b.text %>
             </span>
           <% end %>
         <% end %>
-      </div> 
+      </div>
       
       <% if @post.errors.any? %>
         <ul class="mt-2 text-sm text-red-300">
