@@ -27,6 +27,17 @@
       <%= simple_format(@post.memory_text) %>
     </div>
 
+    <!-- 選択したタグ表示 -->
+    <% if @post.tags.any? %>
+      <div class="mt-4 flex flex-wrap gap-2 text-sm justify-center">
+        <% @post.tags.each do |tag| %>
+          <%= link_to tag.name, tag_path(tag),
+                class: "px-3 py-1 rounded-full bg-gray-800 border border-gray-600
+                        text-gray-200 hover:bg-gray-700 transition" %>
+        <% end %>
+      </div>
+    <% end %>
+
     <%# 共通ボタンクラス（見た目は変わらない） %>
     <% btn_base = "inline-flex items-center text-white px-4 py-2 rounded-lg shadow-md justify-center" %>
 
@@ -45,15 +56,24 @@
         </div>
       <% end %>
 
-      <!-- Xシェアリンク -->
-      <% share_text   = "MeloLogを投稿したよ！ #MeloLog\n#{@post.song.title} - #{@post.song.artist}" %>
-      <% encoded_text = ERB::Util.url_encode(share_text + "\n") %>
+      <% hashtags = @post.tags
+                      .limit(5)
+                      .map { |t| "##{t.name.to_s.strip.gsub(/\s+/, '_').gsub(/[^0-9A-Za-z_ぁ-んァ-ヶ一-龠ー]/, '')}" }
+                      .uniq
+                      .join(' ') %>
+
+      <% title  = @post.song&.title  || "Unknown Title" %>
+      <% artist = @post.song&.artist || "Unknown Artist" %>
+
+      <% share_text   = "MeloLogを投稿したよ！ #MeloLog\n#{hashtags}\n#{title} - #{artist}" %>
+      <% encoded_text = ERB::Util.url_encode(share_text) %>
       <% encoded_url  = ERB::Util.url_encode(post_url(@post)) %>
-      <a href="https://twitter.com/intent/tweet?text=<%= encoded_text %>&url=<%= encoded_url %>"
-         target="_blank"
-         rel="noopener noreferrer"
-         aria-label="Xでシェアする"
-         class="bg-blue-500 hover:bg-blue-600 <%= btn_base %>">
+
+      <a href="https://x.com/intent/tweet?text=<%= encoded_text %>&url=<%= encoded_url %>"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Xでシェアする"
+        class="bg-blue-500 hover:bg-blue-600 <%= btn_base %>">
         <%= image_tag "x-logo.png", alt: "Xロゴ", size: "20x20" %>
         &ensp;でシェアする
       </a>

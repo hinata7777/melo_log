@@ -1,0 +1,28 @@
+<div class="min-h-screen bg-gray-900 text-white p-6">
+  <div class="max-w-md mx-auto">
+    <h1 class="text-2xl font-bold mb-4 text-center">ハッシュタグ一覧</h1>
+
+    <div class="space-y-3">
+      <% @tags.each do |tag| %>
+        <%= link_to tag_path(tag),
+            class: "block bg-gray-800 rounded-xl p-4 hover:bg-gray-700 transition" do %>
+          <div class="flex flex-col items-center gap-1">
+            <span class="font-semibold"><%= tag.name %></span>
+            <span class="text-sm text-gray-400"><%= tag.post_tags_count %>件</span>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+
+    <% unless logged_in? %> <!-- Deviseなら: unless user_signed_in? -->
+      <div class="mt-6 text-center">
+        <%= link_to "アカウントを作成",
+            new_user_path,
+            class: "inline-block text-sm px-3 py-1.5 rounded bg-purple-600 hover:bg-purple-500" %>
+        <p class="text-xs text-gray-400 mt-2">
+          ユーザー登録するとタグ付き投稿やマイページ管理が使えるよ！
+        </p>
+      </div>
+    <% end %>
+  </div>
+</div>

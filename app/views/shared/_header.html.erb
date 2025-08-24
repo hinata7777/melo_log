@@ -11,6 +11,7 @@
       <!-- 右側メニュー -->
       <div class="hidden md:flex items-center space-x-6">
         <%= link_to "新規投稿", new_post_path, class: "text-gray-300 hover:text-purple-400" %>
+        <%= link_to "ハッシュタグ", tags_path, class: "text-gray-300 hover:text-purple-400" %>
 
         <% if logged_in? %>
           <div class="relative">
@@ -19,7 +20,7 @@
               data-action="click->header-menu#toggleDropdown"
               class="flex items-center focus:outline-none">
               <%= image_tag avatar_variant_for(current_user, size: 40),
-                    class: "h-10 w-10 rounded-full border border-gray-600 object-cover",
+                    class: "h-10 w-10 rounded-full border border-gray-600 object-cover cursor-pointer",
                     width: 40, height: 40, loading: "lazy", decoding: "async", alt: "" %>
             </button>
 
@@ -57,6 +58,7 @@
       data-header-menu-target="mobileMenu"
       class="hidden md:hidden mt-2 space-y-2 bg-gray-800 rounded-lg p-4 z-40">
       <%= link_to "新規投稿", new_post_path, class: "block text-gray-300 hover:text-purple-400" %>
+      <%= link_to "ハッシュタグ", tags_path, class: "block text-gray-300 hover:text-purple-400" %>
       <% if logged_in? %>
         <%= link_to "マイページ", user_path(current_user), class: "block text-gray-300 hover:text-purple-400" %>
         <%= link_to "ログアウト", logout_path, data: { turbo_method: :delete }, class: "block text-gray-300 hover:text-purple-400" %>

@@ -5,6 +5,8 @@ class User < ApplicationRecord
 
   has_one_attached :avatar_image
 
+  enum role: { general: 0, admin: 1 }
+  
   # emailは前処理で正規化
   before_validation :downcase_email
 

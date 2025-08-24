@@ -1,0 +1,94 @@
+<div class="flex items-center justify-between mb-6 text-gray-100">
+  <h1 class="text-2xl font-bold tracking-tight">タグ管理</h1>
+  <%= link_to "新規作成", new_admin_tag_path,
+        class: "px-4 py-2 rounded-xl bg-indigo-500 text-black font-medium shadow hover:bg-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/60" %>
+</div>
+
+<div class="overflow-hidden rounded-2xl border border-gray-700 shadow bg-gray-900/60">
+  <div class="overflow-x-auto">
+    <table class="min-w-[980px] w-full text-sm text-gray-200">
+      <colgroup>
+        <col class="w-20" />
+        <col />
+        <col class="w-28" />
+        <col class="w-28" />
+        <col class="w-36" />
+        <col class="w-40" />
+      </colgroup>
+
+      <thead class="sticky top-0 bg-gray-800/80 backdrop-blur border-b border-gray-700">
+        <tr class="text-left text-xs font-semibold text-gray-300">
+          <th class="px-4 py-3">ID</th>
+          <th class="px-4 py-3">名前</th>
+          <th class="px-4 py-3">状態</th>
+          <th class="px-4 py-3">カテゴリ</th>
+          <th class="px-4 py-3">使用数</th>
+          <th class="px-4 py-3 text-right">作成日</th>
+          <th class="px-4 py-3 text-right">操作</th>
+        </tr>
+      </thead>
+
+      <tbody class="divide-y divide-gray-800">
+        <% @tags.each do |tag| %>
+          <tr class="hover:bg-gray-800/60">
+            <td class="px-4 py-4 align-middle">
+              <span class="font-mono text-xs text-gray-400">#<%= tag.id %></span>
+            </td>
+
+            <td class="px-4 py-4 align-middle">
+              <span class="font-medium truncate" title="<%= tag.name %>"><%= tag.name %></span>
+            </td>
+
+            <td class="px-4 py-4 align-middle">
+              <% if tag.active %>
+                <span class="inline-flex items-center rounded-full bg-green-900/40 text-green-200 px-2 py-0.5 text-xs font-semibold ring-1 ring-green-500/30">ON</span>
+              <% else %>
+                <span class="inline-flex items-center rounded-full bg-gray-700 text-gray-300 px-2 py-0.5 text-xs font-semibold ring-1 ring-gray-500/30">OFF</span>
+              <% end %>
+            </td>
+
+            <td class="px-4 py-4 align-middle">
+              <% if tag.respond_to?(:category) && !tag.category.nil? %>
+                <span class="inline-flex items-center rounded-md bg-indigo-900/40 text-indigo-200 px-2 py-0.5 text-xs font-medium ring-1 ring-indigo-500/30">
+                  カテゴリ: <%= tag.category %>
+                </span>
+              <% else %>
+                <span class="text-gray-500">—</span>
+              <% end %>
+            </td>
+
+            <td class="px-4 py-4 align-middle">
+              <span class="tabular-nums"><%= tag.respond_to?(:post_tags_count) ? tag.post_tags_count : "-" %></span>
+            </td>
+
+            <td class="px-4 py-4 align-middle text-right text-gray-300">
+              <%= l(tag.created_at, format: :short) %>
+            </td>
+
+            <td class="px-4 py-4 align-middle">
+              <div class="flex items-center justify-end gap-2">
+                <%= link_to edit_admin_tag_path(tag),
+                      class: "inline-flex items-center gap-1 rounded-lg border border-gray-600 px-3 py-1.5 text-xs font-medium text-gray-200 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500/40" do %>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16.862 3.487a2.1 2.1 0 1 1 2.97 2.97L7.5 18.79 3 19.5l.71-4.5 13.152-11.513Z"/>
+                  </svg>
+                  編集
+                <% end %>
+
+                <%= button_to admin_tag_path(tag),
+                      method: :delete,
+                      form: { data: { turbo_confirm: "削除しますか？" } },
+                      class: "inline-flex items-center gap-1 rounded-lg bg-red-900/40 text-red-200 px-3 py-1.5 text-xs font-semibold hover:bg-red-900/60 border border-red-700/40 focus:outline-none focus:ring-2 focus:ring-red-500/40" do %>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 6h18M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-1 0v14a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V6h10Z"/>
+                  </svg>
+                  削除
+                <% end %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -56,14 +56,59 @@
       <%= hidden_field_tag :spotify_url, nil, data: { turbo_permanent: true } %>
 
       <%= f.text_area :memory_text, placeholder: "この曲の思い出を書こう（300文字以内）",
-                       class: "w-full p-3 rounded bg-gray-900 border border-white text-white placeholder-gray-400 mb-4" %>
-      <%= f.submit "投稿する", class: "bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-md" %>
+                       class: "w-full p-3 rounded bg-gray-900 border border-white text-white placeholder-gray-400 mb-2" %>
+      
+      <!-- タグ選択・編集 -->
+      <% has_resident = logged_in? && @resident_tags.present? %>
+      <% has_event   = @event_tags.present? %>
+
+      <% if has_resident || has_event %>
+        <div class="mb-2 space-y-4">
+          <!-- まず隠しフィールド：何も選ばなくても param 形を維持 -->
+          <%= f.hidden_field :tag_ids, value: [], multiple: true %>
+          <!-- 常駐タグ（ログイン時のみ表示・選択可） -->
+          <% if logged_in? %>
+            <div>
+              <p class="block text-sm text-gray-400 mb-2">タグ（複数選択可）</p>
+              <div class="mt-4 flex flex-wrap justify-center gap-2">
+                <%= f.collection_check_boxes :tag_ids, @resident_tags, :id, :name, include_hidden: false do |b| %>
+                  <%= b.label class: "cursor-pointer" do %>
+                    <%= b.check_box(class: "hidden peer") %>
+                    <span class="px-4 py-2 rounded-full border border-gray-400 text-gray-300
+                                peer-checked:bg-blue-500 peer-checked:text-white peer-checked:border-blue-500 transition">
+                      <%= b.text %>
+                    </span>
+                  <% end %>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+          <!-- イベントタグ（誰でも選べる） -->
+          <% if has_event %>
+            <div>
+              <p class="block text-sm text-gray-400 mb-2">イベントタグ</p>
+              <div class="mt-4 flex flex-wrap justify-center gap-2">
+                <%= f.collection_check_boxes :tag_ids, @event_tags, :id, :name, include_hidden: false do |b| %>
+                  <%= b.label class: "cursor-pointer" do %>
+                    <%= b.check_box(class: "hidden peer") %>
+                    <span class="px-4 py-2 rounded-full border border-gray-400 text-gray-300
+                                peer-checked:bg-blue-500 peer-checked:text-white peer-checked:border-blue-500 transition">
+                      <%= b.text %>
+                    </span>
+                  <% end %>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+      <%= f.submit "投稿する", class: "mt-6 bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow-md" %>
     <% end %>
 
     <% unless logged_in? %>
       <div class="mt-10 border-t border-gray-700 pt-6 flex flex-col items-center gap-2 text-center">
         <p class="text-gray-400 text-xs">
-          ユーザー登録すると、投稿をマイページで管理できるよ！
+          ユーザー登録すると様々な機能が楽しめるよ！<br>・マイページでの投稿管理<br>・ハッシュタグ付き投稿
         </p>
         <%= link_to "アカウントを作成",
             new_user_path,
