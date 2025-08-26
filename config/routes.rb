@@ -19,9 +19,24 @@ Rails.application.routes.draw do
     resources :tags
   end
 
+  namespace :auth do
+    get "spotify/start",    to: "spotify#start"
+    get "/callback",        to: "spotify#callback"   # ← Spotifyに登録したURIと完全一致
+  end
+
+  namespace :my do
+    resources :playlists, only: [:index, :create]   # GET /my/playlists, POST /my/playlists
+  end
+
+  resources :tags, only: [:index, :show], param: :slug do
+    resource :playlist, only: :create, module: :tags  # POST /tags/:slug/playlist
+  end
+
+  resources :playlists, only: :show, param: :id do
+    post :push_to_spotify, on: :member
+  end
+
   resources :password_resets, only: %i[new create edit update], param: :token
-  
-  resources :tags, only: %i[index show]
 
   get 'login', to: 'user_sessions#new'
   post 'login', to: 'user_sessions#create'
