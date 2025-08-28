@@ -34,6 +34,10 @@ class User < ApplicationRecord
     avatar_image.attached? ? avatar_image : "avatars/default.png"
   end
   
+  def spotify_token_expired?
+    spotify_token_expires_at.blank? || Time.current >= (spotify_token_expires_at - 60.seconds)
+  end
+
   private
 
   def downcase_email

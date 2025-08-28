@@ -6,6 +6,11 @@
       <div class="flex items-center gap-4">
         <div class="h-16 w-16 rounded-full border border-gray-600 bg-gray-700 grid place-content-center text-2xl font-bold">🎵</div>
         <h1 class="text-2xl font-bold"><%= @tag.name %></h1>
+        <%= button_to "MeloLogプレイリストを作成", 
+            tag_playlist_path(@tag),
+            method: :post, 
+            data: { turbo: false },
+            class: "cursor-pointer px-3 py-1.5 rounded bg-indigo-600 text-white" %>
         <div class="ml-auto">
           <%= link_to "タグ一覧へ", tags_path, class: "text-sm px-3 py-1.5 rounded bg-gray-700 hover:bg-gray-600" %>
         </div>
