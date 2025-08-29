@@ -1,0 +1,21 @@
+<h1 class="text-xl font-bold mb-3">My Playlists</h1>
+
+<div class="flex items-center gap-3 mb-4">
+  <% count = current_user.posts.where.not(song_id: nil).count %>
+  <%= button_to "マイプレイリスト作成/更新",
+      my_playlists_path, method: :post,
+      class: "px-3 py-1.5 rounded bg-indigo-600 text-white disabled:opacity-40",
+      disabled: (count < 15) %>
+  <% if count < 15 %>
+    <p class="text-sm text-gray-400">あと <%= 15 - count %> 曲で作成できます</p>
+  <% end %>
+</div>
+
+<ul class="space-y-2">
+  <% @playlists.each do |pl| %>
+    <li>
+      <%= link_to pl.title, playlist_path(pl.slug), class: "text-blue-400 underline" %>
+      <span class="text-xs text-gray-500 ml-2">更新: <%= l pl.updated_at, format: :short %></span>
+    </li>
+  <% end %>
+</ul>

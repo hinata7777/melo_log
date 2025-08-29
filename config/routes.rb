@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   root "home#index"
+ 
   resources :posts, only: %i[new create show edit update destroy] do
     member do
       get :og_image
@@ -19,9 +20,18 @@ Rails.application.routes.draw do
     resources :tags
   end
 
-  resources :password_resets, only: %i[new create edit update], param: :token
-  
+  namespace :auth do
+    get "spotify/start",    to: "spotify#start"
+    get "spotify/callback", to: "spotify#callback"   # ← Spotifyに登録したURIと完全一致
+  end
+
   resources :tags, only: %i[index show]
+
+  post "/me/playlist", to: "spotify_playlists#create_for_me", as: :me_playlist
+
+  post "/tags/:id/playlist", to: "spotify_playlists#create_for_tag", as: :tag_playlist
+
+  resources :password_resets, only: %i[new create edit update], param: :token
 
   get 'login', to: 'user_sessions#new'
   post 'login', to: 'user_sessions#create'

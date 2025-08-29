@@ -20,15 +20,38 @@
 
       <!-- 簡易ステータス -->
       <div class="mt-4 grid grid-cols-2 gap-4 text-center">
-        <div class="bg-gray-700/60 rounded p-3">
+        <div class="bg-gray-700/60 rounded p-3 h-full flex flex-col items-center justify-center">
           <div class="text-xl font-bold"><%= @posts_count %></div>
           <div class="text-gray-300 text-xs">投稿数</div>
         </div>
-        <div class="bg-gray-700/60 rounded p-3">
-          <div class="text-xl font-bold">
-            <%= @latest_post_at.present? ? @latest_post_at.in_time_zone('Asia/Tokyo').strftime("%Y/%m/%d") : "-" %>
+        <div class="bg-gray-700/60 rounded overflow-hidden">
+          <div class="px-4 py-3 border-b border-gray-600 text-left">
+            <p class="text-xs text-gray-300">Spotifyに作る</p>
+            <h3 class="text-lg font-semibold">MeloLogプレイリスト</h3>
           </div>
-          <div class="text-gray-300 text-xs">最新の投稿</div>
+          <div class="p-4">
+            <% if current_user %>
+              <%= button_to me_playlist_path,
+                  method: :post,
+                  params: { user_id: @user.id },
+                  form: { data: { turbo: false } },
+                  disabled: (@posts_count < required_songs),
+                  class: "w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white font-medium cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed" do %>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 4v16m8-8H4"/>
+                </svg>
+                <span>作成</span>
+              <% end %>
+
+              <% if @posts_count < required_songs %>
+                <p class="mt-2 text-xs text-gray-300 text-center">
+                  あと <%= required_songs - @posts_count %> 曲で作成可
+                </p>
+              <% end %>
+            <% else %>
+              <span class="text-gray-300 text-sm">ログインでプレイリスト作成</span>
+            <% end %>
+          </div>
         </div>
       </div>
     </section>
