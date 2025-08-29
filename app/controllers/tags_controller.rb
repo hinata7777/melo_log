@@ -2,7 +2,8 @@ class TagsController < ApplicationController
   include Pagy::Backend
 
   def index
-    @tags = Tag.active.order(:name)
+    @resident_tags = Tag.active.resident.order(:name)
+    @event_tags    = Tag.active.event.order(:name)
   end
 
   def show

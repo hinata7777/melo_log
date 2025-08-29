@@ -2,8 +2,10 @@
   <div class="max-w-md mx-auto">
     <h1 class="text-2xl font-bold mb-4 text-center">ハッシュタグ一覧</h1>
 
+    <!-- 常駐タグ -->
+    <h2 class="text-lg font-semibold mt-4 mb-2">通常タグ</h2>
     <div class="space-y-3">
-      <% @tags.each do |tag| %>
+      <% @resident_tags.each do |tag| %>
         <%= link_to tag_path(tag),
             class: "block bg-gray-800 rounded-xl p-4 hover:bg-gray-700 transition" do %>
           <div class="flex flex-col items-center gap-1">
@@ -12,7 +14,26 @@
           </div>
         <% end %>
       <% end %>
+      <% if @resident_tags.empty? %>
+        <p class="text-sm text-gray-400">通常タグはまだありません。</p>
+      <% end %>
     </div>
+
+    <!-- イベントタグ -->
+    <% if @event_tags.any? %>
+      <h2 class="text-lg font-semibold mt-8 mb-2">イベントタグ</h2>
+      <div class="space-y-3">
+        <% @event_tags.each do |tag| %>
+          <%= link_to tag_path(tag),
+              class: "block bg-gray-800 rounded-xl p-4 hover:bg-gray-700 transition" do %>
+            <div class="flex flex-col items-center gap-1">
+              <span class="font-semibold"><%= tag.name %></span>
+              <span class="text-sm text-gray-400"><%= tag.post_tags_count %>件</span>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
 
     <% unless logged_in? %> <!-- Deviseなら: unless user_signed_in? -->
       <div class="mt-6 text-center">
