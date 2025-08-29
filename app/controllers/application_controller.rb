@@ -1,6 +1,10 @@
 class ApplicationController < ActionController::Base
   include Pagy::Backend
   
+  REQUIRED_SONGS = 15
+  helper_method :required_songs
+  def required_songs = REQUIRED_SONGS
+
   private
   
   def not_authenticated

@@ -8,9 +8,9 @@ class SpotifyPlaylistsController < ApplicationController
     current_user.refresh_spotify_token! if current_user.spotify_token_expired?
     # 例: 15曲以上なければ弾く（任意）
     cnt = owner.posts.where.not(song_id: nil).count
-    if cnt < 15
+    if cnt < required_songs
       redirect_back fallback_location: root_path,
-                    alert: "プレイリスト作成にはあと#{15 - cnt}曲必要です"
+                    alert: "プレイリスト作成にはあと#{required_songs - cnt}曲必要です"
       return
     end
 
@@ -32,12 +32,20 @@ class SpotifyPlaylistsController < ApplicationController
   # 2) タグに紐づく曲から作成
   def create_for_tag
     current_user.refresh_spotify_token! if current_user.spotify_token_expired?
+    
     tag = Tag.find(params[:id])
+    posts_scope = tag.posts.where.not(song_id: nil).includes(:song).order(created_at: :desc)
 
-    posts = tag.posts.where.not(song_id: nil).includes(:song).order(created_at: :desc)
-    uris  = posts.map(&:song).map { |s| spotify_uri_for(s) }.compact.uniq
+    cnt = posts_scope.count
+    if cnt < required_songs
+      redirect_back fallback_location: tag_path(tag), alert: "プレイリスト作成にはあと#{required_songs - cnt}曲必要です"
+      return
+    end
+
+    uris  = posts_scope.map { |p| spotify_uri_for(p.song) }.compact.uniq
     if uris.empty?
-      redirect_back fallback_location: tag_path(tag.slug), alert: "このタグの曲がありません" and return
+      redirect_back fallback_location: tag_path(tag), alert: "このタグの曲がありません" 
+      return
     end
 
     title = "MeloLog: #{tag.name}"

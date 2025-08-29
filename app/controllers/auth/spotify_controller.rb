@@ -58,7 +58,7 @@ class Auth::SpotifyController < ApplicationController
   # どちらかに統一：環境変数 or ルートヘルパ
   # ルートヘルパを使う場合は default_url_options[:host] を設定しておくこと
   def callback_uri
-    ENV["SPOTIFY_REDIRECT_URI"] || auth_spotify_callback_url
+    ENV.fetch("SPOTIFY_REDIRECT_URI")
   end
 
   def fallback_return_path
