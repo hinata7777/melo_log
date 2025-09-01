@@ -8,3 +8,4 @@ class SongsController < ApplicationController
     render partial: "songs/results", locals: { songs: @songs }
   end
 end
+
