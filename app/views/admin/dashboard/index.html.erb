@@ -1,7 +1,11 @@
 <div class="flex items-center justify-between mb-6 text-gray-100">
   <h1 class="text-2xl font-bold tracking-tight">ダッシュボード</h1>
-  <%= link_to "タグ管理へ", admin_tags_path,
-        class: "px-3 py-2 rounded-lg bg-indigo-500 text-black font-semibold shadow hover:bg-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/60" %>
+  <div class="flex items-center gap-2">
+    <%= link_to "投稿管理へ", admin_posts_path,
+          class: "px-3 py-2 rounded-lg bg-indigo-500 text-black font-semibold shadow hover:bg-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/60" %>
+    <%= link_to "タグ管理へ", admin_tags_path,
+          class: "px-3 py-2 rounded-lg bg-indigo-500 text-black font-semibold shadow hover:bg-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/60" %>
+  </div>
 </div>
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">

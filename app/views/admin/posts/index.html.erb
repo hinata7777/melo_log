@@ -1,0 +1,102 @@
+<div class="mx-auto max-w-6xl p-6 text-gray-100">
+  <div class="mb-4 flex items-center justify-between">
+    <h1 class="text-2xl font-bold">Admin: 投稿一覧</h1>
+    <% if defined?(@pagy) %>
+      <div class="text-sm text-gray-400">
+        全 <span class="font-semibold text-gray-200"><%= @pagy.count %></span> 件
+        （<%= @pagy.page %>/<%= @pagy.pages %>）
+      </div>
+    <% end %>
+  </div>
+
+  <!-- 検索フォーム（ダーク最適化 & リセット導線） -->
+  <div class="mb-4 rounded-2xl border border-gray-700 bg-gray-900/60 p-4 shadow">
+    <%= form_with url: admin_posts_path, method: :get, local: true, class: "flex flex-wrap items-center gap-3" do %>
+      <label for="q" class="sr-only">検索</label>
+      <input id="q" type="text" name="q" value="<%= h @q %>" placeholder="曲名・アーティスト・本文・メール"
+             class="w-72 rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-gray-100 placeholder:text-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
+      <label class="inline-flex items-center gap-2 text-sm text-gray-200">
+        <input type="checkbox" name="only_anonymous" value="1"
+               class="size-4 rounded border-gray-600 bg-gray-800 text-indigo-500 focus:ring-indigo-500"
+               <%= "checked" if params[:only_anonymous] == "1" %> />
+        匿名のみ
+      </label>
+      <button class="rounded-lg bg-indigo-600 px-4 py-2 font-medium text-white shadow hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-400/60">
+        検索
+      </button>
+      <% if params[:q].present? || params[:only_anonymous] == "1" %>
+        <%= link_to "リセット", admin_posts_path, class: "ml-1 text-sm text-gray-400 underline-offset-2 hover:text-gray-200 hover:underline" %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <!-- テーブル（ダーク、ストライプ、ホバー、固定ヘッダ） -->
+  <div class="overflow-x-auto rounded-2xl border border-gray-700 bg-gray-900/60 shadow">
+    <table class="min-w-full text-sm">
+      <thead class="sticky top-0 z-10 bg-gray-800/90 text-left text-gray-200 backdrop-blur">
+        <tr>
+          <th class="p-3 font-semibold">ID</th>
+          <th class="p-3 font-semibold">ユーザー</th>
+          <th class="p-3 font-semibold">曲</th>
+          <th class="p-3 font-semibold">本文</th>
+          <th class="p-3 font-semibold">投稿日</th>
+          <th class="p-3 font-semibold">操作</th>
+        </tr>
+      </thead>
+      <tbody class="[&_tr:nth-child(even)]:bg-gray-900/30">
+        <% @posts.each do |post| %>
+          <tr class="border-t border-gray-700/80 hover:bg-gray-800/40">
+            <td class="p-3 font-mono text-gray-300"><%= post.id %></td>
+            <td class="p-3">
+              <% if post.user %>
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex items-center rounded-full bg-emerald-500/20 px-2 py-0.5 text-xs font-medium text-emerald-300">登録</span>
+                  <span class="truncate text-gray-100 max-w-[16rem]" title="<%= post.user.email %>"><%= post.user.email %></span>
+                </div>
+              <% else %>
+                <span class="inline-flex items-center rounded-full bg-amber-500/20 px-2 py-0.5 text-xs font-medium text-amber-300">匿名</span>
+              <% end %>
+            </td>
+            <td class="p-3">
+              <% if post.song %>
+                <div class="truncate text-gray-100 max-w-[18rem]" title="<%= "#{post.song.title} — #{post.song.artist}" %>">
+                  <%= post.song.title %> — <span class="text-gray-400"><%= post.song.artist %></span>
+                </div>
+                <% if post.song.respond_to?(:spotify_url) && post.song.spotify_url.present? %>
+                  <%= link_to "Spotify", post.song.spotify_url, target: "_blank",
+                        class: "mt-1 inline-block text-xs text-indigo-300 hover:text-indigo-200 underline underline-offset-2" %>
+                <% end %>
+              <% else %>
+                <span class="text-gray-500">（曲情報なし）</span>
+              <% end %>
+            </td>
+            <td class="p-3 max-w-[28rem]">
+              <div class="line-clamp-2 text-gray-300"><%= post.memory_text %></div>
+            </td>
+            <td class="p-3 whitespace-nowrap text-gray-400">
+              <%= l(post.created_at, format: :short) rescue post.created_at %>
+            </td>
+            <td class="p-3">
+              <div class="flex items-center gap-2">
+                <%= link_to "表示",
+                      post_path(post),
+                      target: "_blank",
+                      class: "rounded-lg border border-gray-600 px-3 py-1 text-gray-200 hover:bg-gray-800" %>
+                <%= button_to "削除",
+                      admin_post_path(post),
+                      method: :delete,
+                      form: { data: { turbo_confirm: "投稿 ##{post.id} を削除します。よろしいですか？" } },
+                      class: "rounded-lg bg-red-600 px-3 py-1 font-medium text-white hover:bg-red-500" %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ページネーション（黒背景向け） -->
+  <div class="mt-4 flex justify-center">
+    <%== pagy_nav(@pagy) if defined?(@pagy) %>
+  </div>
+</div>
