@@ -31,22 +31,36 @@
           </div>
           <div class="p-4">
             <% if current_user %>
-              <%= button_to me_playlist_path,
-                    method: :post,
-                    params: { user_id: @user.id },
-                    form: { data: { turbo: false } },
-                    disabled: true,
-                    class: "w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg
-                            bg-gray-600/70 text-white font-medium opacity-60 cursor-not-allowed pointer-events-none" do %>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 4v16m8-8H4"/>
-                </svg>
-                <span>作成（準備中）</span>
-              <% end %>
-
-              <% if @posts_count < required_songs %>
+              <% if @posts_count >= required_songs %>
+                <!-- 曲数が足りている場合：アクティブなボタン -->
+                <%= button_to playlist_user_path(@user),
+                      method: :post,
+                      params: { user_id: @user.id },
+                      form: { data: { turbo: false } },
+                      class: "w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg
+                              bg-green-600 hover:bg-green-700 text-white font-medium transition-colors" do %>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 4v16m8-8H4"/>
+                  </svg>
+                  <span>プレイリスト作成</span>
+                <% end %>
+              <% else %>
+                <!-- 曲数が足りない場合：無効化されたボタン -->
+                <%= button_to playlist_user_path(@user),
+                      method: :post,
+                      params: { user_id: @user.id },
+                      form: { data: { turbo: false } },
+                      disabled: true,
+                      class: "w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg
+                              bg-gray-600/70 text-white font-medium opacity-60 cursor-not-allowed pointer-events-none" do %>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 4v16m8-8H4"/>
+                  </svg>
+                  <span>プレイリスト作成</span>
+                <% end %>
+                
                 <p class="mt-2 text-xs text-gray-300 text-center">
-                  あと <%= required_songs - @posts_count %> 曲で作成可
+                  あと <%= required_songs - @posts_count %> 曲で作成可能
                 </p>
               <% end %>
             <% else %>

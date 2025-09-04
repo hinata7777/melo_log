@@ -52,6 +52,22 @@ class UsersController < ApplicationController
     end
   end
 
+  def playlist
+    user = User.find(params[:id])  # ← マイページの持ち主（URLの :id）
+
+    playlist = Playlist.find_or_initialize_by(user_id: user.id)
+    if playlist.new_record?
+      playlist.title = "#{user.nickname} の MeloLog"
+      playlist.slug  = "user-#{user.id}"  # 既存スキーマ：slugは必須＆一意
+      playlist.save!
+    end
+
+    url = Spotify::SyncPlaylist.new(playlist).call
+    redirect_to url, allow_other_host: true
+  rescue => e
+    redirect_to user_path(user), alert: "プレイリスト作成に失敗: #{e.message}"
+  end
+
   private
 
   def set_user
