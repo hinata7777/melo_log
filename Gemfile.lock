@@ -431,6 +431,7 @@ DEPENDENCIES
   cssbundling-rails
   debug
   dotenv-rails
+  faraday
   httparty
   image_processing (~> 1.2)
   jbuilder

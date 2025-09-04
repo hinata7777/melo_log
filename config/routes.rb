@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   resources :users, only: %i[new create show edit update] do
     member do 
       patch :update_avatar
+      post  :playlist
     end
   end
 
@@ -18,6 +19,8 @@ Rails.application.routes.draw do
     resources :users, only: %i[index show update]
     resources :posts, only: %i[index show update destroy]
     resources :tags
+    get "spotify_bot/connect",  to: "spotify_bot#connect"
+    get "spotify_bot/callback", to: "spotify_bot#callback"
   end
 
   namespace :auth do
@@ -28,7 +31,6 @@ Rails.application.routes.draw do
   resources :tags, only: %i[index show]
 
   post "/me/playlist", to: "spotify_playlists#create_for_me", as: :me_playlist
-
   post "/tags/:id/playlist", to: "spotify_playlists#create_for_tag", as: :tag_playlist
 
   resources :password_resets, only: %i[new create edit update], param: :token

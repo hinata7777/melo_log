@@ -43,7 +43,6 @@ class Auth::SpotifyController < ApplicationController
 
     current_user.update!(
       spotify_access_token:      b["access_token"],
-      # 再認可時はrefresh_tokenが返らないことがあるので既存値を温存
       spotify_refresh_token:     b["refresh_token"].presence || current_user.spotify_refresh_token,
       spotify_token_expires_at:  Time.current + b["expires_in"].to_i.seconds
     )

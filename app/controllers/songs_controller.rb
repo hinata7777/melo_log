@@ -2,10 +2,13 @@ require 'ostruct'
 
 class SongsController < ApplicationController
   def search
-    query = params[:q]
-    @songs = query.present? ? SpotifyService.search(query) : []
+    q = params[:q].to_s.strip
+    @songs = q.present? ? SpotifyService.new.search(q) : []
 
-    render partial: "songs/results", locals: { songs: @songs }
+    render turbo_stream: turbo_stream.replace(
+      "search_results",
+      partial: "songs/results",
+      locals: { songs: @songs }
+    )
   end
 end
-
