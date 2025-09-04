@@ -39,7 +39,7 @@ class SpotifyPlaylistsController < ApplicationController
     tag = Tag.find(params[:id])
     playlist = Playlist.find_or_initialize_by(tag_id: tag.id)
     if playlist.new_record?
-      playlist.title = "##{tag.name} の MeloLog"
+      playlist.title = "#{tag.name} の MeloLog"
       playlist.slug  = "tag-#{tag.id}"
       playlist.save!
     end
