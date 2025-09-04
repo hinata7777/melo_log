@@ -23,9 +23,9 @@ module Spotify
     end
 
     def update_details!(playlist_id:, name:, description:, public: true)
-      jput("/playlists/#{playlist_id}", {
-        name: name, description: description, public: public
-      })
+      # 更新時は public を送らない（送ると 400 が出るケースがある）
+      body = { name: name, description: description }
+      jput("/playlists/#{playlist_id}", body)
     end
 
     def replace_items!(playlist_id:, uris:)
