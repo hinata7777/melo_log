@@ -5,7 +5,7 @@ class SongsController < ApplicationController
     q = params[:q].to_s.strip
     @songs = q.present? ? SpotifyService.new.search(q) : []
 
-    render turbo_stream: turbo_stream.replace(
+    render turbo_stream: turbo_stream.update(
       "search_results",
       partial: "songs/results",
       locals: { songs: @songs }
