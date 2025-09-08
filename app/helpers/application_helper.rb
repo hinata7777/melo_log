@@ -1,22 +1,32 @@
 module ApplicationHelper
   include Pagy::Frontend
+  include CloudinaryHelper  # ← 追加（cl_image_path を使う）
 
+  # Cloudinary配信用URLを返す。ビュー側は今まで通り image_tag(...) でOK
   def avatar_variant_for(user, size: 64)
-    return "avatars/default.png" unless user&.avatar_image&.attached?
+    return image_path("avatars/default.png") unless user&.avatar_image&.attached?
 
-    # 旧:local の添付は今の :cloudinary とサービス名が違うので即フォールバック
+    blob = user.avatar_image.blob
+
+    # 旧:local 添付は原本が消えている可能性 → デフォにフォールバック
     current_service = Rails.application.config.active_storage.service.to_s
-    blob_service    = user.avatar_image.blob.service_name
-    return "avatars/default.png" if blob_service.present? && blob_service != current_service
+    if blob.service_name.to_s != current_service
+      return image_path("avatars/default.png")
+    end
 
-    user.avatar_image.variant(
-      resize_to_fill: [size, size],
-      quality: "auto",
-      fetch_format: "auto"
-    ).processed
+    # Cloudinaryの公開IDは基本 blob.key
+    # 変換は Cloudinary 側で実行（c_fill,w,h と f_auto/q_auto）
+    cl_image_path(
+      blob.key,
+      width: size, height: size, crop: :fill,
+      fetch_format: :auto, quality: :auto
+    )
   rescue ActiveStorage::FileNotFoundError, Errno::ENOENT
-    # 原本がもう無い（Renderのエフェメラルで消えた）→ 落とさずフォールバック
+    # 原本がない壊れ添付は掃除してデフォに
     user.avatar_image.purge_later
-    "avatars/default.png"
+    image_path("avatars/default.png")
+  rescue => e
+    Rails.logger.warn("avatar_variant_for fallback: #{e.class}: #{e.message}")
+    image_path("avatars/default.png")
   end
 end
