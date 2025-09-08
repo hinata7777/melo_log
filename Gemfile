@@ -52,6 +52,8 @@ gem 'rails-i18n', '~> 7.0.0'
 
 gem 'dotenv-rails'
 
+gem "cloudinary" 
+
 gem "activestorage-cloudinary-service"
 
 gem "image_processing", "~> 1.2"
