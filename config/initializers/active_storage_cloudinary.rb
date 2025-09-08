@@ -1,0 +1,1 @@
+require "active_storage/service/cloudinary_service"
