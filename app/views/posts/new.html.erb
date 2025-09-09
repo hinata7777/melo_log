@@ -22,10 +22,6 @@
             value: params[:q],
             class: "p-2 rounded w-64 bg-gray-900 border border-white text-white placeholder-gray-400 mr-2",
             autocomplete: "off" %>
-
-        <!-- 検索実行時は常に1ページ目へ -->
-        <%= hidden_field_tag :page, 1, id: nil %>
-
         <%= f.submit "検索",
             data: { disable_with: "検索中…" },
             class: "bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded" %>
