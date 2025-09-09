@@ -1,3 +1,4 @@
+# app/services/spotify_service.rb
 require "net/http"
 require "uri"
 require "json"
@@ -19,15 +20,19 @@ class SpotifyService
   end
 
   # --- 検索：常に日本語優先ヘッダ＋market=JP、5件のみ ---
+  # ・market はメソッドからのみ取得（引数で上書き不可 = ブレ防止）
   def search(query, limit: 5)
     token = app_token!
 
+    mk = market.to_s.upcase
+    mk = "JP" unless mk.match?(/\A[A-Z]{2}\z/) # 念のためバリデーション
+
     url = URI("#{BASE_URL}/search")
     url.query = URI.encode_www_form(
-      q:     query,
-      type:  "track",
-      limit: limit,
-      market: market
+      q:      query.to_s,
+      type:   "track",
+      limit:  limit.to_i,
+      market: mk
     )
 
     res = Net::HTTP.start(url.host, url.port, use_ssl: true) do |http|
@@ -74,12 +79,13 @@ class SpotifyService
     end
 
     body  = safe_json(res.body)
-    token = body["access_token"]
+    token = body["access_token"].to_s
     exp   = body["expires_in"].to_i
-    raise "Spotify app token fetch failed: #{res.code} - #{res.body}" if token.to_s.empty?
+    raise "Spotify app token fetch failed: #{res.code} - #{res.body}" if token.empty?
 
     @app_token = token
-    @app_token_expires_at = Time.now + exp
+    # 期限直前の401を避けるため 30秒マージン
+    @app_token_expires_at = Time.now + [exp - 30, 0].max
     @app_token
   end
 
