@@ -1,27 +1,43 @@
-# app/services/spotify_service.rb
 require "net/http"
 require "uri"
 require "json"
 require "base64"
 require "ostruct"
+require "thread"  # Mutex
 
 class SpotifyService
   BASE_URL  = "https://api.spotify.com/v1"
   TOKEN_URL = "https://accounts.spotify.com/api/token"
 
   def initialize
-    # 検索用（Client Credentials）の簡易キャッシュ
+    # 検索用（Client Credentials）のキャッシュ
     @app_token = nil
     @app_token_expires_at = nil
+    @token_mutex = Mutex.new
+  end
+
+  # ====== marketの単一決定点（ENV未設定でもJP固定） ======
+  def market
+    ENV.fetch("SPOTIFY_MARKET", "JP")
+  end
+
+  # ====== URI組み立て（market渡し忘れを物理的に防ぐ） ======
+  def build_uri(path, params = {})
+    uri = URI("#{BASE_URL}#{path}")
+    q = URI.decode_www_form(uri.query.to_s) + params.to_a
+    q << ["market", market] unless q.any? { |k, _| k.to_s == "market" }
+    uri.query = URI.encode_www_form(q)
+    uri
   end
 
   # ========== 検索：未ログインOK（Client Credentials） ==========
-  def search(query, limit: 5, market: "JP")
-    token = app_token!
+  # 初回から必ずJP寄りの結果になるように、アプリトークン＋market固定、401は自動リトライ
+  def search(query, limit: 5, offset: 0, market: nil)
+    market ||= self.market
+    url = build_uri("/search", q: query, type: "track", limit: limit, offset: offset, market: market)
+    res = http_get_with_app_token(url, headers: { "Accept-Language" => "ja-JP,ja;q=0.9" })
 
-    url = URI("#{BASE_URL}/search?q=#{URI.encode_www_form_component(query)}&type=track&limit=#{limit}&market=#{market}")
-    res = http_get(url, bearer: token, headers: { "Accept-Language" => "ja-JP,ja;q=0.9" })
-    data = safe_json(res.body)
+    data  = safe_json(res.body)
     items = data.dig("tracks", "items") || []
 
     items.map do |t|
@@ -38,7 +54,7 @@ class SpotifyService
 
   # ========== プレイリスト系：常に“開発者アカ”に作成 ==========
   def create_playlist(name, description = "", public: true)
-    url = URI("#{BASE_URL}/me/playlists")
+    url = build_uri("/me/playlists") # marketは不要だがbuild_uriに統一
     res = http_post_json(url, { name: name, description: description, public: public },
                          bearer: developer_access_token!)
     return safe_json(res.body) if res.code.to_i == 201
@@ -48,14 +64,14 @@ class SpotifyService
   end
 
   def add_tracks_to_playlist(playlist_id, track_uris)
-    url = URI("#{BASE_URL}/playlists/#{playlist_id}/tracks")
+    url = build_uri("/playlists/#{playlist_id}/tracks")
     res = http_post_json(url, { uris: track_uris }, bearer: developer_access_token!)
     res.code.to_i == 201
   end
 
   # （必要なら）開発者アカの /me 情報
   def get_current_user
-    url = URI("#{BASE_URL}/me")
+    url = build_uri("/me")
     res = http_get(url, bearer: developer_access_token!)
     return safe_json(res.body) if res.code.to_i == 200
 
@@ -65,42 +81,62 @@ class SpotifyService
 
   private
 
-  # -------- Appトークン（Client Credentials）を取得・キャッシュ --------
+  # -------- Appトークン（Client Credentials）を取得・キャッシュ（同期） --------
   def app_token!
-    if @app_token && @app_token_expires_at && Time.now < @app_token_expires_at
-      return @app_token
+    @token_mutex.synchronize do
+      if @app_token && @app_token_expires_at && Time.now < @app_token_expires_at
+        return @app_token
+      end
+
+      client_id     = ENV.fetch("SPOTIFY_CLIENT_ID")
+      client_secret = ENV.fetch("SPOTIFY_CLIENT_SECRET")
+      basic = Base64.strict_encode64("#{client_id}:#{client_secret}")
+
+      url = URI(TOKEN_URL)
+      res = Net::HTTP.start(url.host, url.port, use_ssl: true) do |http|
+        req = Net::HTTP::Post.new(url)
+        req["Authorization"] = "Basic #{basic}"
+        req["Content-Type"]  = "application/x-www-form-urlencoded"
+        req.body = URI.encode_www_form(grant_type: "client_credentials")
+        http.request(req)
+      end
+
+      body  = safe_json(res.body)
+      token = body["access_token"]
+      exp   = body["expires_in"].to_i
+      raise "Spotify app token fetch failed: #{res.code} - #{res.body}" if token.to_s.empty?
+
+      # 期限切れ直前の401を避けるため、30秒マージン
+      @app_token = token
+      @app_token_expires_at = Time.now + [exp - 30, 0].max
+      @app_token
     end
-
-    client_id     = ENV.fetch("SPOTIFY_CLIENT_ID")
-    client_secret = ENV.fetch("SPOTIFY_CLIENT_SECRET")
-    basic = Base64.strict_encode64("#{client_id}:#{client_secret}")
-
-    url = URI(TOKEN_URL)
-    res = Net::HTTP.start(url.host, url.port, use_ssl: true) do |http|
-      req = Net::HTTP::Post.new(url)
-      req["Authorization"] = "Basic #{basic}"
-      req["Content-Type"]  = "application/x-www-form-urlencoded"
-      req.body = URI.encode_www_form(grant_type: "client_credentials")
-      http.request(req)
-    end
-
-    body = safe_json(res.body)
-    token = body["access_token"]
-    exp   = body["expires_in"].to_i
-    raise "Spotify app token fetch failed: #{res.code} - #{res.body}" if token.nil?
-
-    @app_token = token
-    @app_token_expires_at = Time.now + exp
-    @app_token
   end
 
-  # -------- 開発者アカのアクセストークン（遅延取得） --------
-  # ※まずは環境変数から読む方式。後でrefresh_token方式に差し替え可能。
+  def reset_app_token!
+    @token_mutex.synchronize do
+      @app_token = nil
+      @app_token_expires_at = nil
+    end
+  end
+
+  # -------- 開発者アカのアクセストークン（ENV直読） --------
+  # 後でrefresh_token方式に差し替え可
   def developer_access_token!
     ENV.fetch("SPOTIFY_DEV_ACCESS_TOKEN")
   end
 
   # -------- HTTP helpers --------
+  # Appトークン専用：401（期限切れなど）は1回だけ再取得して自動リトライ
+  def http_get_with_app_token(url, headers: {})
+    res = http_get(url, bearer: app_token!, headers: headers)
+    if res.code.to_i == 401
+      reset_app_token!
+      res = http_get(url, bearer: app_token!, headers: headers)
+    end
+    res
+  end
+
   def http_get(url, bearer:, headers: {})
     Net::HTTP.start(url.host, url.port, use_ssl: true) do |http|
       req = Net::HTTP::Get.new(url)
@@ -121,6 +157,8 @@ class SpotifyService
   end
 
   def safe_json(str)
-    JSON.parse(str) rescue {}
+    JSON.parse(str)
+  rescue
+    {}
   end
 end
