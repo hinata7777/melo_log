@@ -26,6 +26,21 @@
   <% end %>
 
   <% if songs.blank? %>
-    <p class="text-gray-400">該当なし</p>
+    <p class="text-gray-400 text-center py-6">該当なし</p>
+  <% else %>
+    <!-- ページネーション（Turbo Frame内なのでクリックでFrameだけ差し替わる） -->
+    <div class="mt-4 flex justify-center gap-2">
+      <% (1..4).each do |p| %>
+        <% active = (p == page) %>
+        <%= link_to p,
+            search_songs_path(q: q, page: p),
+            data: { 
+              turbo_frame: "search_results" },
+            class: [
+              "inline-flex items-center justify-center w-9 h-9 rounded text-sm font-medium",
+              active ? "bg-indigo-600 text-white" : "bg-gray-800 text-gray-200 hover:bg-gray-700"
+            ].join(" ") %>
+      <% end %>
+    </div>
   <% end %>
 </div>
