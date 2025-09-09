@@ -14,26 +14,11 @@ class SpotifyService
     @app_token_expires_at = nil
   end
 
-  # 日本向け固定（ENVで上書き可）
-  def market
-    ENV["SPOTIFY_MARKET"] || "JP"
-  end
-
-  # --- 検索：常に日本語優先ヘッダ＋market=JP、5件のみ ---
-  # ・market はメソッドからのみ取得（引数で上書き不可 = ブレ防止）
   def search(query, limit: 5)
     token = app_token!
 
-    mk = market.to_s.upcase
-    mk = "JP" unless mk.match?(/\A[A-Z]{2}\z/) # 念のためバリデーション
-
-    url = URI("#{BASE_URL}/search")
-    url.query = URI.encode_www_form(
-      q:      query.to_s,
-      type:   "track",
-      limit:  limit.to_i,
-      market: mk
-    )
+    encoded_q = URI.encode_www_form_component(query.to_s)
+    url = URI("#{BASE_URL}/search?q=#{encoded_q}&type=track&limit=#{limit.to_i}&market=JP")
 
     res = Net::HTTP.start(url.host, url.port, use_ssl: true) do |http|
       req = Net::HTTP::Get.new(url)
