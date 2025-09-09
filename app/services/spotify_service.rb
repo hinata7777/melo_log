@@ -94,6 +94,7 @@ class SpotifyService
 
       url = URI(TOKEN_URL)
       res = Net::HTTP.start(url.host, url.port, use_ssl: true) do |http|
+        with_timeout(http)
         req = Net::HTTP::Post.new(url)
         req["Authorization"] = "Basic #{basic}"
         req["Content-Type"]  = "application/x-www-form-urlencoded"
@@ -131,29 +132,77 @@ class SpotifyService
   def http_get_with_app_token(url, headers: {})
     res = http_get(url, bearer: app_token!, headers: headers)
     if res.code.to_i == 401
+      Rails.logger.warn("[Spotify] 401 -> refresh token and retry for #{url}") rescue nil
       reset_app_token!
       res = http_get(url, bearer: app_token!, headers: headers)
     end
     res
   end
 
+  # ★ Spotify主要GETへ行く直前に market=JP を強制付与し、送信URLをログ出力
   def http_get(url, bearer:, headers: {})
+    url = ensure_market!(url)
+
     Net::HTTP.start(url.host, url.port, use_ssl: true) do |http|
+      with_timeout(http)
+
       req = Net::HTTP::Get.new(url)
       req["Authorization"] = "Bearer #{bearer}"
       headers.each { |k, v| req[k] = v }
-      http.request(req)
+      res = http.request(req)
+
+      # デバッグログ（安定後は削除OK） — トークン値は出さない
+      begin
+        market_q = URI.decode_www_form(url.query.to_s).assoc("market")&.last
+        bearer_kind = (bearer == @app_token) ? "app" : "dev"
+        Rails.logger.info("[Spotify] GET #{url} market=#{market_q} bearer=#{bearer_kind} status=#{res.code}")
+      rescue => e
+        Rails.logger.warn("[Spotify] log_error=#{e.class}: #{e.message}")
+      end
+
+      res
     end
   end
 
   def http_post_json(url, body_hash, bearer:)
     Net::HTTP.start(url.host, url.port, use_ssl: true) do |http|
+      with_timeout(http)
       req = Net::HTTP::Post.new(url)
       req["Authorization"] = "Bearer #{bearer}"
       req["Content-Type"]  = "application/json"
       req.body = body_hash.to_json
-      http.request(req)
+      res = http.request(req)
+      begin
+        Rails.logger.info("[Spotify] POST #{url} status=#{res.code}")
+      rescue; end
+      res
     end
+  end
+
+  # ---- ネットワーク安定化（タイムアウト） ----
+  def with_timeout(http)
+    http.open_timeout = 3
+    http.read_timeout = 5
+    http.write_timeout = 5 if http.respond_to?(:write_timeout)
+  end
+
+  # ---- Spotify主要エンドポイントなら必ず market を付ける（渡し忘れ防止の最終防波堤） ----
+  def ensure_market!(uri)
+    base_host = URI(BASE_URL).host rescue nil
+    return uri unless base_host && uri.host == base_host
+
+    need_paths = ["/v1/search", "/v1/tracks", "/v1/albums", "/v1/artists"]
+    needs = need_paths.any? { |p| uri.path.start_with?(p) }
+    return uri unless needs
+
+    q = URI.decode_www_form(uri.query.to_s)
+    unless q.any? { |k, _| k == "market" }
+      q << ["market", market]
+      new_uri = uri.dup
+      new_uri.query = URI.encode_www_form(q)
+      return new_uri
+    end
+    uri
   end
 
   def safe_json(str)
