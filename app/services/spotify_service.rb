@@ -17,10 +17,16 @@ class SpotifyService
   def search(query, limit: 5)
     token = app_token!
 
-    encoded_q = URI.encode_www_form_component(query.to_s)
-    url = URI("#{BASE_URL}/search?q=#{encoded_q}&type=track&limit=#{limit.to_i}&market=JP")
+    # より確実にmarketパラメータを送信
+    url = URI("#{BASE_URL}/search")
+    url.query = URI.encode_www_form(
+      q: query.to_s,
+      type: "track",
+      limit: limit.to_i,
+      market: "JP"
+    )
 
-    accept_lang = "ja;q=1"
+    accept_lang = "ja"
 
     res = Net::HTTP.start(url.host, url.port, use_ssl: true) do |http|
       req = Net::HTTP::Get.new(url)
