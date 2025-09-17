@@ -18,7 +18,6 @@ class SpotifyService
     token = app_token!
 
     encoded_q = URI.encode_www_form_component(query.to_s)
-    # まずは元のパラメータでログを確認
     url = URI("#{BASE_URL}/search?q=#{encoded_q}&type=track&limit=#{limit.to_i}&market=JP")
 
     res = Net::HTTP.start(url.host, url.port, use_ssl: true) do |http|
@@ -29,12 +28,6 @@ class SpotifyService
     end
 
     data  = safe_json(res.body)
-
-    # デバッグ用: APIレスポンスをログ出力
-    Rails.logger.info "Spotify API Response Status: #{res.code}"
-    Rails.logger.info "Spotify API Request URL: #{url}"
-    Rails.logger.info "Spotify API Response Body (first 1500 chars): #{res.body[0..1500]}"
-
     items = data.dig("tracks", "items") || []
 
     items.map do |t|
