@@ -23,7 +23,7 @@ class SpotifyService
     res = Net::HTTP.start(url.host, url.port, use_ssl: true) do |http|
       req = Net::HTTP::Get.new(url)
       req["Authorization"]   = "Bearer #{token}"
-      req["Accept-Language"] = "ja-JP,ja;q=0.9"
+      req["Accept-Language"] = "ja;q=1"
       http.request(req)
     end
 
