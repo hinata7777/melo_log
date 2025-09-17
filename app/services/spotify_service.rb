@@ -45,6 +45,9 @@ class SpotifyService
 
     res = http_get_with_app_token(url, headers: headers)
 
+    # サーバーの地理的位置を確認（デバッグ用）
+    check_server_location if Rails.env.production?
+
     data  = safe_json(res.body)
     items = data.dig("tracks", "items") || []
 
@@ -217,5 +220,18 @@ class SpotifyService
     JSON.parse(str)
   rescue
     {}
+  end
+
+  # サーバーの地理的位置をチェック（デバッグ用）
+  def check_server_location
+    begin
+      response = Net::HTTP.get_response(URI('http://ipinfo.io/json'))
+      if response.code == '200'
+        location_data = JSON.parse(response.body)
+        Rails.logger.info "[Server Location] IP: #{location_data['ip']}, Country: #{location_data['country']}, Region: #{location_data['region']}, City: #{location_data['city']}"
+      end
+    rescue => e
+      Rails.logger.warn "[Server Location] Error: #{e.message}"
+    end
   end
 end
