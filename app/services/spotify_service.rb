@@ -58,8 +58,7 @@ class SpotifyService
     res = Net::HTTP.start(url.host, url.port, use_ssl: true) do |http|
       req = Net::HTTP::Post.new(url)
       req["Authorization"] = "Basic #{basic}"
-      req["Content-Type"]  = "application/x-www-form-urlencoded"
-      req.body = URI.encode_www_form(grant_type: "client_credentials")
+      req.set_form_data({ grant_type: "client_credentials" })
       http.request(req)
     end
 
