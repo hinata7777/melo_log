@@ -20,14 +20,29 @@ class SpotifyService
     encoded_q = URI.encode_www_form_component(query.to_s)
     url = URI("#{BASE_URL}/search?q=#{encoded_q}&type=track&limit=#{limit.to_i}&market=JP")
 
+    accept_lang = "ja;q=1"
+
     res = Net::HTTP.start(url.host, url.port, use_ssl: true) do |http|
       req = Net::HTTP::Get.new(url)
       req["Authorization"]   = "Bearer #{token}"
-      req["Accept-Language"] = "ja;q=1"
+      req["Accept-Language"] = accept_lang
       http.request(req)
     end
 
     data  = safe_json(res.body)
+
+    # 開発環境と本番環境の違いを確認するためのログ
+    Rails.logger.info "=== Spotify API Debug ==="
+    Rails.logger.info "Environment: #{Rails.env}"
+    Rails.logger.info "Request URL: #{url}"
+    Rails.logger.info "Request Headers: Authorization=Bearer [token], Accept-Language=#{accept_lang}"
+    Rails.logger.info "Response Status: #{res.code}"
+    if data.dig("tracks", "items")&.first
+      first_track = data.dig("tracks", "items").first
+      Rails.logger.info "First Track: #{first_track['name']} by #{first_track.dig('artists', 0, 'name')}"
+    end
+    Rails.logger.info "========================="
+
     items = data.dig("tracks", "items") || []
 
     items.map do |t|
