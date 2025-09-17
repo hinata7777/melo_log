@@ -35,7 +35,7 @@ class SpotifyService
   # トークン取得
   def self.get_token
     url = URI("https://accounts.spotify.com/api/token")
-    auth = Base64.strict_encode64("#{ENV['SPOTIFY_CLIENT_ID']}:#{ENV['SPOTIFY_CLIENT_SECRET']}")
+    auth = Base64.strict_encode64("#{ENV['SPOTIFY_CLIENT_ID']}:#{ENV['SPOTIFY_SECRET']}")
 
     response = Net::HTTP.start(url.host, url.port, use_ssl: true) do |http|
       request = Net::HTTP::Post.new(url)
