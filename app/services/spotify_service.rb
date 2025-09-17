@@ -33,7 +33,7 @@ class SpotifyService
     # デバッグ用: APIレスポンスをログ出力
     Rails.logger.info "Spotify API Response Status: #{res.code}"
     Rails.logger.info "Spotify API Request URL: #{url}"
-    Rails.logger.info "Spotify API Response Body (first 500 chars): #{res.body[0..500]}"
+    Rails.logger.info "Spotify API Response Body (first 1500 chars): #{res.body[0..1500]}"
 
     items = data.dig("tracks", "items") || []
 
