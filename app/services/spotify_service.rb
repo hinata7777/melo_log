@@ -26,7 +26,7 @@ class SpotifyService
       market: "JP"
     )
 
-    accept_lang = "ja"
+    accept_lang = "ja-JP,ja;q=0.9"
 
     res = Net::HTTP.start(url.host, url.port, use_ssl: true) do |http|
       req = Net::HTTP::Get.new(url)
@@ -40,6 +40,7 @@ class SpotifyService
     # 開発環境と本番環境の違いを確認するためのログ
     Rails.logger.info "=== Spotify API Debug ==="
     Rails.logger.info "Environment: #{Rails.env}"
+    Rails.logger.info "Token (first 10 chars): #{token[0..9]}..."
     Rails.logger.info "Request URL: #{url}"
     Rails.logger.info "Request Headers: Authorization=Bearer [token], Accept-Language=#{accept_lang}"
     Rails.logger.info "Response Status: #{res.code}"
@@ -65,11 +66,12 @@ class SpotifyService
 
   private
 
-  # Client Credentials の簡易キャッシュ
+  # Client Credentials の簡易キャッシュ（テスト用に無効化）
   def app_token!
-    if @app_token && @app_token_expires_at && Time.now < @app_token_expires_at
-      return @app_token
-    end
+    # キャッシュを無効化：毎回新しいトークンを取得
+    # if @app_token && @app_token_expires_at && Time.now < @app_token_expires_at
+    #   return @app_token
+    # end
 
     client_id     = ENV.fetch("SPOTIFY_CLIENT_ID")
     client_secret = ENV.fetch("SPOTIFY_CLIENT_SECRET")
