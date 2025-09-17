@@ -1,104 +1,49 @@
-# app/services/spotify_service.rb
-require "net/http"
-require "uri"
-require "json"
-require "base64"
-require "ostruct"
+require 'net/http'
+require 'uri'
+require 'json'
+require 'base64'
 
 class SpotifyService
-  BASE_URL  = "https://api.spotify.com/v1"
-  TOKEN_URL = "https://accounts.spotify.com/api/token"
+  BASE_URL = "https://api.spotify.com/v1"
 
-  def initialize
-    @app_token = nil
-    @app_token_expires_at = nil
-  end
+  # 曲検索
+  def self.search(query)
+    token = get_token
+    url = URI("#{BASE_URL}/search?q=#{URI.encode_www_form_component(query)}&type=track&limit=5&market=JP")
 
-  def search(query, limit: 5)
-    token = app_token!
-
-    # より確実にmarketパラメータを送信
-    url = URI("#{BASE_URL}/search")
-    url.query = URI.encode_www_form(
-      q: query.to_s,
-      type: "track",
-      limit: limit.to_i,
-      market: "JP"
-    )
-
-    accept_lang = "ja-JP,ja;q=0.9"
-
-    res = Net::HTTP.start(url.host, url.port, use_ssl: true) do |http|
-      req = Net::HTTP::Get.new(url)
-      req["Authorization"]   = "Bearer #{token}"
-      req["Accept-Language"] = accept_lang
-      http.request(req)
+    response = Net::HTTP.start(url.host, url.port, use_ssl: true) do |http|
+      request = Net::HTTP::Get.new(url)
+      request['Authorization'] = "Bearer #{token}"
+      request['Accept-Language'] = 'ja-JP,ja;q=0.9'
+      http.request(request)
     end
 
-    data  = safe_json(res.body)
+    data = JSON.parse(response.body)
+    tracks = data.dig("tracks", "items") || []
 
-    # 開発環境と本番環境の違いを確認するためのログ
-    Rails.logger.info "=== Spotify API Debug ==="
-    Rails.logger.info "Environment: #{Rails.env}"
-    Rails.logger.info "Token (first 10 chars): #{token[0..9]}..."
-    Rails.logger.info "Request URL: #{url}"
-    Rails.logger.info "Request Headers: Authorization=Bearer [token], Accept-Language=#{accept_lang}"
-    Rails.logger.info "Response Status: #{res.code}"
-    if data.dig("tracks", "items")&.first
-      first_track = data.dig("tracks", "items").first
-      Rails.logger.info "First Track: #{first_track['name']} by #{first_track.dig('artists', 0, 'name')}"
-    end
-    Rails.logger.info "========================="
-
-    items = data.dig("tracks", "items") || []
-
-    items.map do |t|
+    tracks.map do |track|
       OpenStruct.new(
-        spotify_id:    t["id"],
-        title:         t["name"],
-        artist:        (t["artists"] || []).map { _1["name"] }.join(", "),
-        album_art_url: t.dig("album", "images", 1, "url") || t.dig("album", "images", 0, "url"),
-        spotify_url:   t.dig("external_urls", "spotify"),
-        uri:           t["uri"]
+        spotify_id: track["id"],
+        title: track["name"],
+        artist: track["artists"].map { |a| a["name"] }.join(", "),
+        album_art_url: track.dig("album", "images", 1, "url"),
+        spotify_url: track["external_urls"]["spotify"]
       )
     end
   end
 
-  private
+  # トークン取得
+  def self.get_token
+    url = URI("https://accounts.spotify.com/api/token")
+    auth = Base64.strict_encode64("#{ENV['SPOTIFY_CLIENT_ID']}:#{ENV['SPOTIFY_CLIENT_SECRET']}")
 
-  # Client Credentials の簡易キャッシュ（テスト用に無効化）
-  def app_token!
-    # キャッシュを無効化：毎回新しいトークンを取得
-    # if @app_token && @app_token_expires_at && Time.now < @app_token_expires_at
-    #   return @app_token
-    # end
-
-    client_id     = ENV.fetch("SPOTIFY_CLIENT_ID")
-    client_secret = ENV.fetch("SPOTIFY_CLIENT_SECRET")
-    basic = Base64.strict_encode64("#{client_id}:#{client_secret}")
-
-    url = URI(TOKEN_URL)
-    res = Net::HTTP.start(url.host, url.port, use_ssl: true) do |http|
-      req = Net::HTTP::Post.new(url)
-      req["Authorization"] = "Basic #{basic}"
-      req.set_form_data({ grant_type: "client_credentials" })
-      http.request(req)
+    response = Net::HTTP.start(url.host, url.port, use_ssl: true) do |http|
+      request = Net::HTTP::Post.new(url)
+      request['Authorization'] = "Basic #{auth}"
+      request.set_form_data({ grant_type: 'client_credentials' })
+      http.request(request)
     end
 
-    body  = safe_json(res.body)
-    token = body["access_token"].to_s
-    exp   = body["expires_in"].to_i
-    raise "Spotify app token fetch failed: #{res.code} - #{res.body}" if token.empty?
-
-    @app_token = token
-    # 期限直前の401を避けるため 30秒マージン
-    @app_token_expires_at = Time.now + [exp - 30, 0].max
-    @app_token
-  end
-
-  def safe_json(str)
-    JSON.parse(str)
-  rescue
-    {}
+    JSON.parse(response.body)["access_token"]
   end
 end
